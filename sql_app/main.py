@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -12,6 +13,8 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.add_middleware(PyInstrumentProfilerMiddleware)
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 # Dependency
@@ -36,4 +39,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+
+@app.get("/")
+def read_root(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
 

@@ -18,18 +18,8 @@ class UserBase(BaseModel):
     is_legal_person: bool
 
 
-class UserCreate(UserBase):
+class UserInDB(UserBase):
     password: str
-
-
-class User(UserBase):
-    id: int
-    last_login: Optional[datetime] = None
-    date_joined: datetime
-    role_id: int
-
-    class Config:
-        orm_mode = True
 
 
 class RoleBase(BaseModel):
@@ -44,12 +34,21 @@ class RoleCreate(RoleBase):
 
 class Role(RoleBase):
     id: int
-    users: List[User] = []
+    # users: List[User] = []
 
     class Config:
         orm_mode = True
 
 
+class User(UserBase):
+    id: int
+    last_login: Optional[datetime] = None
+    date_joined: datetime
+    role: Role
+    # role_id: int
+
+    class Config:
+        orm_mode = True
 
 
 
