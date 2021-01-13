@@ -18,10 +18,6 @@ class UserBase(BaseModel):
     is_legal_person: bool
 
 
-class UserInDB(UserBase):
-    password: str
-
-
 class RoleBase(BaseModel):
     person_type: str
     person_slug: str
@@ -51,5 +47,16 @@ class User(UserBase):
         orm_mode = True
 
 
+class UserInDB(User):
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
 
