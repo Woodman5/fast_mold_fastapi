@@ -5,6 +5,10 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
 from . import models, schemas, crud
 from .database import SessionLocal, engine
 
@@ -19,12 +23,18 @@ HASH_ROUNDS = 150000
 
 models.Base.metadata.create_all(bind=engine)
 
+
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # app.add_middleware(PyInstrumentProfilerMiddleware)
 app.add_middleware(SessionMiddleware, session_cookie='SSID-5', secret_key='eglhfvfyfyuf896r6f78ege')
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated='auto', pbkdf2_sha256__rounds=HASH_ROUNDS)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+templates = Jinja2Templates(directory="templates")
 
 
 # Dependency
@@ -128,6 +138,6 @@ async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
 
-@app.get("/", tags=['Root'])
-def read_root(token: str = Depends(oauth2_scheme)):
-    return {"token": token}
+@app.get("/", response_class=HTMLResponse, tags=['Root'])
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "id": 42})
