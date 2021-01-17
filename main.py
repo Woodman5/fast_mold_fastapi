@@ -26,7 +26,7 @@ register_tortoise(
     app,
     db_url=DATABASE_URL,
     modules={"models": [
-                        # "models.user",
+                        "models.user",
                         "models.model",
                         "models.materials",
                         ]},

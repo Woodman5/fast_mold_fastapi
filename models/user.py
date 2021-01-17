@@ -4,8 +4,9 @@ from tortoise.models import Model
 import uuid
 from typing import List, Optional, TypeVar
 
-from fastapi_users import models
+# from fastapi_users import models
 from pydantic import UUID4, BaseModel, EmailStr, validator
+
 
 class User(Model):
     id = fields.IntField(pk=True, index=True)

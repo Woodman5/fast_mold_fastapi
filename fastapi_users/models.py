@@ -24,18 +24,21 @@ class CreateUpdateDictModel(BaseModel):
 class BaseUser(CreateUpdateDictModel):
     """Base User model."""
 
-    id: Optional[UUID4] = None
+    id: Optional[int] = None
+    user_uuid: Optional[UUID4] = None
+    username: Optional[str] = None
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
     is_verified: Optional[bool] = False
 
-    @validator("id", pre=True, always=True)
+    @validator("user_uuid", pre=True, always=True)
     def default_id(cls, v):
         return v or uuid.uuid4()
 
 
 class BaseUserCreate(CreateUpdateDictModel):
+    username: str
     email: EmailStr
     password: str
     is_active: Optional[bool] = True
@@ -48,8 +51,9 @@ class BaseUserUpdate(BaseUser):
 
 
 class BaseUserDB(BaseUser):
-    id: UUID4
-    hashed_password: str
+    id: int
+    user_uuid = UUID4
+    password: str
 
     class Config:
         orm_mode = True
