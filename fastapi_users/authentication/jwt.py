@@ -61,7 +61,7 @@ class JWTAuthentication(BaseAuthentication[str]):
 
         try:
             user_uiid = UUID4(user_id)
-            return await user_db.get(user_uiid)
+            return await user_db.get(user_uuid=user_uiid)
         except ValueError:
             return None
 

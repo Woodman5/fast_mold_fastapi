@@ -8,7 +8,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from models import user, model
+from schemas import user
+from models import model
 from fastapi_users.db import TortoiseBaseUserModel, TortoiseUserDatabase
 from fastapi_users.authentication import CookieAuthentication
 from fastapi_users import FastAPIUsers

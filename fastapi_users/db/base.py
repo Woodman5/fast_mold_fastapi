@@ -19,8 +19,16 @@ class BaseUserDatabase(Generic[UD]):
     def __init__(self, user_db_model: Type[UD]):
         self.user_db_model = user_db_model
 
-    async def get(self, id: UUID4) -> Optional[UD]:
+    async def get(self, id: int) -> Optional[UD]:
         """Get a single user by id."""
+        raise NotImplementedError()
+
+    async def get_by_user_uuid(self, user_uuid: UUID4) -> Optional[UD]:
+        """Get a single user by user_uuid."""
+        raise NotImplementedError()
+
+    async def get_by_username(self, username: str) -> Optional[UD]:
+        """Get a single user by username."""
         raise NotImplementedError()
 
     async def get_by_email(self, email: str) -> Optional[UD]:
@@ -51,7 +59,7 @@ class BaseUserDatabase(Generic[UD]):
 
         Will automatically upgrade password hash if necessary.
         """
-        user = await self.get_by_email(credentials.username)
+        user = await self.get_by_username(credentials.username)
 
         if user is None:
             # Run the hasher to mitigate timing attack
@@ -60,13 +68,13 @@ class BaseUserDatabase(Generic[UD]):
             return None
 
         verified, updated_password_hash = password.verify_and_update_password(
-            credentials.password, user.hashed_password
+            credentials.password, user.password
         )
         if not verified:
             return None
         # Update password hash to a more robust one if needed
         if updated_password_hash is not None:
-            user.hashed_password = updated_password_hash
+            user.password = updated_password_hash
             await self.update(user)
 
         return user

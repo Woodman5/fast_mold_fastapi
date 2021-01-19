@@ -9,9 +9,11 @@ from fastapi_users.models import UD
 
 
 class TortoiseBaseUserModel(models.Model):
-    id = fields.UUIDField(pk=True, generated=False)
+    id = fields.IntField(pk=True)
+    user_uuid = fields.UUIDField(index=True, unique=True, null=False)
+    username = fields.CharField(index=True, unique=True, null=False, max_length=30)
     email = fields.CharField(index=True, unique=True, null=False, max_length=255)
-    hashed_password = fields.CharField(null=False, max_length=255)
+    password = fields.CharField(null=False, max_length=255)
     is_active = fields.BooleanField(default=True, null=False)
     is_superuser = fields.BooleanField(default=False, null=False)
     is_verified = fields.BooleanField(default=False, null=False)
@@ -76,6 +78,20 @@ class TortoiseUserDatabase(BaseUserDatabase[UD]):
             return self.user_db_model(**user_dict)
         except DoesNotExist:
             return None
+
+    async def get_by_username(self, username: str) -> Optional[UD]:
+        query = self.model.filter(username__iexact=username).first()
+
+        if self.oauth_account_model is not None:
+            query = query.prefetch_related("oauth_accounts")
+
+        user = await query
+
+        if user is None:
+            return None
+
+        user_dict = await user.to_dict()
+        return self.user_db_model(**user_dict)
 
     async def get_by_email(self, email: str) -> Optional[UD]:
         query = self.model.filter(email__iexact=email).first()
