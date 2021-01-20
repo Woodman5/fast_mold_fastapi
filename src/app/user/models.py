@@ -2,6 +2,8 @@ from tortoise import fields, models
 
 
 class UserModel(models.Model):
+    """ User Model """
+
     id = fields.IntField(pk=True)
     user_uuid = fields.UUIDField(index=True, unique=True, null=False)
     username = fields.CharField(index=True, unique=True, null=False, max_length=30)
@@ -19,6 +21,7 @@ class UserModel(models.Model):
     is_legal_person = fields.BooleanField(default=False, null=False)
     last_login = fields.DatetimeField(auto_now=True)
     date_joined = fields.DatetimeField(auto_now_add=True)
+    avatar = fields.CharField(max_length=255, null=True)
 
     # модель надо указать так: ключ словаря (models) как в файле main при регистрации черепахи
     # в пункте modules и далее после точки название модели которое есть в файлах,
@@ -44,8 +47,13 @@ class UserModel(models.Model):
         table = 'UserAccounts_user'
         table_description = "User"
 
+    class PydanticMeta:
+        exclude = ('password',)
+
 
 class PersonType(models.Model):
+    """Person role model"""
+
     person_type = fields.CharField(description='User type', max_length=100)
     person_slug = fields.CharField(description='Identifier', max_length=100)
     person_desc = fields.TextField(description='Description', default='', null=True)

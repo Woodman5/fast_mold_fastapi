@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "fast_mold_fastapi"
+version = "0.1.0"
+description = ""
+authors = ["yderevyannyh <youriywoodman@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+fastapi = {extras = ["all"], version = "^0.63.0"}
+tortoise-orm = "^0.16.19"
+PyJWT = "^2.0.1"
+passlib = "^1.7.4"
+httpx = "^0.16.1"
+typer = "^0.3.2"
+psycopg2-binary = "^2.8.6"
+aerich = "^0.4.3"
+asyncpg = "^0.21.0"
+emails = "^0.6"
+loguru = "^0.5.3"
+aiomysql = "^0.0.21"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
