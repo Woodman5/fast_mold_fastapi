@@ -7,7 +7,6 @@ authors = ["yderevyannyh <youriywoodman@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 fastapi = {extras = ["all"], version = "^0.63.0"}
-tortoise-orm = "^0.16.19"
 PyJWT = "^2.0.1"
 passlib = "^1.7.4"
 httpx = "^0.16.1"
@@ -17,6 +16,8 @@ aerich = "^0.4.3"
 asyncpg = "^0.21.0"
 emails = "^0.6"
 loguru = "^0.5.3"
+python-dotenv = "^0.15.0"
+tortoise-orm = {extras = ["asyncpg"], version = "^0.16.19"}
 aiomysql = "^0.0.21"
 
 [tool.poetry.dev-dependencies]

@@ -9,13 +9,13 @@ from src.app.user import service, schemas
 
 from .schemas import Token, Msg, VerificationOut
 from .jwt import create_token
-from .security import get_password_hash
+# from .security import get_password_hash
 from .send_email import send_reset_password_email
 from .service import (
     generate_password_reset_token,
     verify_password_reset_token,
     registration_user,
-    # verify_registration_user
+    verify_registration_user
 )
 
 
@@ -35,7 +35,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks):
+async def user_registration(new_user: schemas.User_Create_Pydantic, task: BackgroundTasks):
     """ Регистрация пользователя
     """
     user = await registration_user(new_user, task)
@@ -45,12 +45,12 @@ async def user_registration(new_user: schemas.UserCreateInRegistration, task: Ba
         return {"msg": "Send email"}
 
 
-# @auth_router.post("/confirm-email", response_model=Msg)
-# async def confirm_email(uuid: VerificationOut):
-#     if await verify_registration_user(uuid):
-#         return {"msg": "Success verify email"}
-#     else:
-#         raise HTTPException(status_code=404, detail="Not found")
+@auth_router.post("/confirm-email", response_model=Msg)
+async def confirm_email(uuid: VerificationOut):
+    if await verify_registration_user(uuid):
+        return {"msg": "Success verify email"}
+    else:
+        raise HTTPException(status_code=404, detail="Not found")
 
 
 @auth_router.post("/password-recovery/{email}", response_model=Msg)

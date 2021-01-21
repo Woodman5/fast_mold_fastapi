@@ -8,9 +8,10 @@ from tortoise.query_utils import Q
 from src.config import settings
 
 from src.app.user import schemas, service, models
-# from .models import Verification
+from .models import Verification
 from .send_email import send_new_account_email
-# from .schemas import VerificationOut
+from .schemas import VerificationOut
+
 
 password_reset_jwt_subject = "preset"
 
@@ -21,22 +22,22 @@ async def registration_user(new_user: schemas.UserCreateInRegistration, task: Ba
         return True
     else:
         user = await service.user_s.create_user(new_user)
-        # verify = await Verification.create(user_id=user.id)
+        verify = await Verification.create(user_id=user.id)
         task.add_task(
             send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
         )
         return False
 
 
-# async def verify_registration_user(uuid: VerificationOut) -> bool:
-#     """ Подтверждение email пользователя """
-#     verify = await Verification.get(link=uuid.link).prefetch_related("user")
-#     if verify:
-#         await service.user_s.update(schema=schemas.UserBaseInDB(is_active=True), id=verify.user.id)
-#         # await Verification.filter(link=uuid.link).delete()
-#         return True
-#     else:
-#         return False
+async def verify_registration_user(uuid: VerificationOut) -> bool:
+    """ Подтверждение email пользователя """
+    verify = await Verification.get(link=uuid.link).prefetch_related("user")
+    if verify:
+        await service.user_s.update(schema=schemas.UserDBNotPublic(is_verified=True), id=verify.user.id)
+        await Verification.filter(link=uuid.link).delete()
+        return True
+    else:
+        return False
 
 
 def generate_password_reset_token(email: str):

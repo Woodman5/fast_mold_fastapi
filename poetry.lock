@@ -645,6 +645,7 @@ python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
 aiosqlite = ">=0.16.0,<0.17.0"
+asyncpg = {version = "*", optional = true, markers = "extra == \"asyncpg\""}
 iso8601 = ">=0.1.13,<0.2.0"
 pypika = ">=0.44.0,<0.45.0"
 pytz = ">=2020.4,<2021.0"
@@ -762,7 +763,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "80403090464e94238f452f34e2219da2aca7b0a5031a85159840ab2b623d88b2"
+content-hash = "cfd6bb28fd9ae1196ad4a9a57bd0905bcab896cf3bae23cc951c05cd064fb912"
 
 [metadata.files]
 aerich = [

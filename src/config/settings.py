@@ -1,23 +1,32 @@
 import os
 
+
+DEV = bool(os.environ.get('DEV', True))
+
+if DEV:
+    from dotenv import load_dotenv
+    load_dotenv()
+
+
 PROJECT_NAME = "FastMold"
 VERSION = "0.1.0"
 DESCRIPTION = "Materials DB and process engineering"
+SERVER_HOST = os.environ.get("SERVER_HOST", 'localhost')
 
-SERVER_HOST = os.environ.get("SERVER_HOST")
+DEBUG = os.environ.get('DEBUG', False)
 
 # Secret key
-SECRET_KEY = b"cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# Rounds for pbkdf2 sha256
-HASH_ROUNDS = 200000
+# Rounds for pbkdf2 sha256 password hashing
+HASH_ROUNDS = os.environ.get('HASH_ROUNDS', 200000)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-API_V1_STR = "/api/v1"
+API_V1_STR = os.environ.get('API_V1_STR', "/api/v1")
 
-# Token 60 minutes * 24 hours * 8 days = 7 days
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
+# Token 60 minutes * 24 hours * 7 days = 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 60 * 24 * 7)
 
 # CORS
 BACKEND_CORS_ORIGINS = [
@@ -28,18 +37,16 @@ BACKEND_CORS_ORIGINS = [
     "http://localhost:9000",
 ]
 
-DATABASE_URI = 'sqlite://db.sqlite3'
+DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
+               f'{os.environ.get("POSTGRES_PASSWORD")}@' \
+               f'{os.environ.get("POSTGRES_HOST")}:5432/' \
+               f'{os.environ.get("POSTGRES_DB")}'
 
-# DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
-#                f'{os.environ.get("POSTGRES_PASSWORD")}@' \
-#                f'{os.environ.get("POSTGRES_HOST")}:5432/' \
-#                f'{os.environ.get("POSTGRES_DB")}'
-
-USERS_OPEN_REGISTRATION = True
+USERS_OPEN_REGISTRATION = os.environ.get('USERS_OPEN_REGISTRATION', True)
 
 EMAILS_FROM_NAME = PROJECT_NAME
-EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
-EMAIL_TEMPLATES_DIR = "src/email-templates/build"
+EMAIL_RESET_TOKEN_EXPIRE_HOURS = os.environ.get("EMAIL_RESET_TOKEN_EXPIRE_HOURS", 24)
+EMAIL_TEMPLATES_DIR = "src/templates/email-templates/build"
 
 # Email
 SMTP_TLS = os.environ.get("SMTP_TLS")

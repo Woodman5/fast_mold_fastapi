@@ -1,7 +1,18 @@
-from src.config.settings import DATABASE_URI, APPS_MODELS
+from src.config.settings import APPS_MODELS
 
 TORTOISE_ORM = {
-    "connections": {"default": DATABASE_URI},
+    "connections": {
+        "default": {
+            "engine": "tortoise.backends.asyncpg",
+            "credentials": {
+                    "database": "postgres",
+                    "host": "127.0.0.1",
+                    "password": "Rfhnjy5",
+                    "port": 5432,
+                    "user": "postgres",
+            }
+        }
+    },
     "apps": {
         "models": {
             "models": APPS_MODELS,

@@ -19,8 +19,8 @@ class UserModel(models.Model):
     address = fields.TextField(null=True)
     is_staff = fields.BooleanField(default=False, null=False)
     is_legal_person = fields.BooleanField(default=False, null=False)
-    last_login = fields.DatetimeField(auto_now=True)
-    date_joined = fields.DatetimeField(auto_now_add=True)
+    last_login = fields.DatetimeField(null=True)
+    date_joined = fields.DatetimeField(auto_now_add=True, null=True)
     avatar = fields.CharField(max_length=255, null=True)
 
     # модель надо указать так: ключ словаря (models) как в файле main при регистрации черепахи
@@ -48,7 +48,7 @@ class UserModel(models.Model):
         table_description = "User"
 
     class PydanticMeta:
-        exclude = ('password',)
+        exclude = ('date_joined',)
 
 
 class PersonType(models.Model):
@@ -61,7 +61,7 @@ class PersonType(models.Model):
     usermodels: fields.ReverseRelation[UserModel]
 
     class Meta:
-        table = 'handbook_persontype'
+        table = 'UserAccounts_persontype'
         table_description = "User type"
 
     def __str__(self):
