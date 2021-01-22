@@ -1,6 +1,5 @@
 from typing import Optional
 from datetime import datetime
-import uuid
 
 from fastapi import Body, Form
 from pydantic import BaseModel, EmailStr, UUID4
@@ -28,7 +27,7 @@ class Role(RoleBase):
 class User(BaseModel):
     """User model"""
 
-    user_uuid: UUID4 = uuid.uuid4()
+    user_uuid: UUID4
     username: str
     email: EmailStr
     avatar: str = None
@@ -50,17 +49,28 @@ class User(BaseModel):
         orm_mode = True
 
 
-class UserCreate(User):
-    """ Свойства для получения через API при создании из админки """
+class UserInDB(User):
+    """ Свойства для получения через API """
 
     username: str
     email: EmailStr
-    password: str
     first_name: str
     last_name: str
-    address: str
+    address: Optional[str]
     is_staff: bool
     role: Role
+
+
+class UserForAdminInDB(UserInDB):
+    """ Properties to receive via API by admin """
+
+    id: int
+
+
+class UserLastLoginUpdate(BaseModel):
+    """ Update last login time"""
+
+    last_login: datetime
 
 
 class UserCreateInRegistration(User):
@@ -83,26 +93,38 @@ class UserUpdate(User):
     password: Optional[str] = Form(...)
 
 
-class UserDBNotPublic(User):
-    id: int
+class UserVerifyEmail(BaseModel):
+    """ Properties to verify Email via link """
+    is_verified: bool
 
 
+# Используется при создании пользователя при запросе данных у пользователя
 User_Create_Pydantic = pydantic_model_creator(UserModel,
                                               name='create_user',
                                               exclude_readonly=True,
                                               exclude=('user_uuid',
-                                                       'avatar',
                                                        'is_active',
                                                        'is_superuser',
                                                        'is_verified',
-                                                       'middle_name',
-                                                       'address',
                                                        'is_staff',
                                                        'is_legal_person',
                                                        'last_login',
+                                                       'date_joined',
                                                        'role',
                                                        ),
                                               )
+
+# Используется при создании пользователя администратором
+User_Admin_Create_Pydantic = pydantic_model_creator(UserModel,
+                                                    name='create_user_by_admin',
+                                                    exclude_readonly=True,
+                                                    exclude=('user_uuid',
+                                                             'last_login',
+                                                             'date_joined',
+                                                             ),
+                                                    )
+
+# Используется при создании пользователя при получении данных из базы
 User_Pydantic = pydantic_model_creator(UserModel,
                                        name='user',
                                        )

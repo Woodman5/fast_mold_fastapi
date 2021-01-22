@@ -1,11 +1,12 @@
 from tortoise import fields, models
+import uuid
 
 
 class UserModel(models.Model):
     """ User Model """
 
     id = fields.IntField(pk=True)
-    user_uuid = fields.UUIDField(index=True, unique=True, null=False)
+    user_uuid = fields.UUIDField(index=True, unique=True, null=False, default=uuid.uuid4())
     username = fields.CharField(index=True, unique=True, null=False, max_length=30)
     email = fields.CharField(index=True, unique=True, null=False, max_length=255)
     password = fields.CharField(null=False, max_length=255)
@@ -20,7 +21,7 @@ class UserModel(models.Model):
     is_staff = fields.BooleanField(default=False, null=False)
     is_legal_person = fields.BooleanField(default=False, null=False)
     last_login = fields.DatetimeField(null=True)
-    date_joined = fields.DatetimeField(auto_now_add=True, null=True)
+    date_joined = fields.DatetimeField(auto_now_add=True)
     avatar = fields.CharField(max_length=255, null=True)
 
     # модель надо указать так: ключ словаря (models) как в файле main при регистрации черепахи
@@ -48,6 +49,7 @@ class UserModel(models.Model):
         table_description = "User"
 
     class PydanticMeta:
+        backward_relations = True,
         exclude = ('date_joined',)
 
 

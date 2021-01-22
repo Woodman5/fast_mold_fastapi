@@ -52,7 +52,7 @@ def send_new_account_email(email_to: str, username: str, password: str, uuid: st
     subject = f"{project_name} - New account for user {username}"
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.html") as f:
         template_str = f.read()
-    link = f"{settings.SERVER_HOST}/verify/?token={uuid}"
+    link = f"{settings.SERVER_HOST}/{settings.API_V1_STR}/confirm-email?link={uuid}"
     send_email(
         email_to=email_to,
         subject_template=subject,

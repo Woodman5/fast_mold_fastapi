@@ -10,14 +10,14 @@ from ..base.service_base import BaseService
 
 class UserService(BaseService):
     model = models.UserModel
-    create_schema = schemas.UserCreateInRegistration
+    create_schema = schemas.User_Create_Pydantic
     update_schema = schemas.UserUpdate
     get_schema = schemas.User_Pydantic
 
-    async def create_user(self, schema: schemas.UserCreateInRegistration, **kwargs):
+    async def create_user(self, schema: schemas.User_Create_Pydantic, **kwargs):
         hash_password = get_password_hash(schema.dict().pop("password"))
         return await self.create(
-            schemas.UserCreateInRegistration(
+            schemas.User_Create_Pydantic(
                 **schema.dict(exclude={"password"}), password=hash_password, **kwargs
             )
         )

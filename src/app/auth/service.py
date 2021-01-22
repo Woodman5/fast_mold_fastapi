@@ -10,13 +10,13 @@ from src.config import settings
 from src.app.user import schemas, service, models
 from .models import Verification
 from .send_email import send_new_account_email
-from .schemas import VerificationOut
+from pydantic import UUID4
 
 
 password_reset_jwt_subject = "preset"
 
 
-async def registration_user(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks) -> bool:
+async def registration_user(new_user: schemas.User_Pydantic, task: BackgroundTasks) -> bool:
     """Регистрация пользователя"""
     if await models.UserModel.filter(Q(username=new_user.username) | Q(email=new_user.email)).exists():
         return True
@@ -29,12 +29,12 @@ async def registration_user(new_user: schemas.UserCreateInRegistration, task: Ba
         return False
 
 
-async def verify_registration_user(uuid: VerificationOut) -> bool:
+async def verify_registration_user(uuid: UUID4) -> bool:
     """ Подтверждение email пользователя """
-    verify = await Verification.get(link=uuid.link).prefetch_related("user")
+    verify = await Verification.get(link=uuid).prefetch_related("user")
     if verify:
-        await service.user_s.update(schema=schemas.UserDBNotPublic(is_verified=True), id=verify.user.id)
-        await Verification.filter(link=uuid.link).delete()
+        await service.user_s.update(schema=schemas.UserVerifyEmail(is_verified=True), id=verify.user.id)
+        await Verification.filter(link=uuid).delete()
         return True
     else:
         return False

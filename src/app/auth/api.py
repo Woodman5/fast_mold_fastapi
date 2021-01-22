@@ -1,13 +1,17 @@
+import datetime
+
 from fastapi import BackgroundTasks
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 
+from pydantic import UUID4
+
 # from src.config.social_app import social_auth, redirect_uri
 
 from src.app.user import service, schemas
 
-from .schemas import Token, Msg, VerificationOut
+from .schemas import Token, Msg
 from .jwt import create_token
 # from .security import get_password_hash
 from .send_email import send_reset_password_email
@@ -31,6 +35,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    await service.user_s.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
     return create_token(user.id)
 
 
@@ -45,9 +50,9 @@ async def user_registration(new_user: schemas.User_Create_Pydantic, task: Backgr
         return {"msg": "Send email"}
 
 
-@auth_router.post("/confirm-email", response_model=Msg)
-async def confirm_email(uuid: VerificationOut):
-    if await verify_registration_user(uuid):
+@auth_router.get("/confirm-email", response_model=Msg)
+async def confirm_email(link: UUID4):
+    if await verify_registration_user(link):
         return {"msg": "Success verify email"}
     else:
         raise HTTPException(status_code=404, detail="Not found")

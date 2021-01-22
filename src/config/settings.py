@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API_V1_STR = os.environ.get('API_V1_STR', "/api/v1")
 
 # Token 60 minutes * 24 hours * 7 days = 7 days
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 60 * 24 * 7)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 60 * 24 * 7))
 
 # CORS
 BACKEND_CORS_ORIGINS = [
@@ -46,10 +46,10 @@ USERS_OPEN_REGISTRATION = os.environ.get('USERS_OPEN_REGISTRATION', True)
 
 EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = os.environ.get("EMAIL_RESET_TOKEN_EXPIRE_HOURS", 24)
-EMAIL_TEMPLATES_DIR = "src/templates/email-templates/build"
+EMAIL_TEMPLATES_DIR = "src/templates/email-templates/ready"
 
 # Email
-SMTP_TLS = os.environ.get("SMTP_TLS")
+SMTP_SSL = os.environ.get("SMTP_SSL")
 SMTP_PORT = os.environ.get("SMTP_PORT")
 SMTP_HOST = os.environ.get("SMTP_HOST")
 SMTP_USER = os.environ.get("SMTP_USER")
