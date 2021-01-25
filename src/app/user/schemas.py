@@ -3,8 +3,10 @@ from datetime import datetime
 
 from fastapi import Body, Form
 from pydantic import BaseModel, EmailStr, UUID4
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 from .models import UserModel, PersonType
+
+from tortoise import Tortoise
 
 
 class RoleBase(BaseModel):
@@ -27,23 +29,23 @@ class Role(RoleBase):
 class User(BaseModel):
     """User model"""
 
-    user_uuid: UUID4
-    username: str
-    email: EmailStr
-    avatar: str = None
-    is_active: bool = True
-    is_superuser: bool = False
-    is_verified: bool = False
-    first_name: str
-    last_name: str
-    middle_name: str = None
-    phone: str
-    address: str = None
-    is_staff: bool = False
-    is_legal_person: bool = False
-    last_login: datetime = None
-    date_joined: datetime
-    role: Role = 4
+    user_uuid: Optional[UUID4]
+    username: Optional[str]
+    email: Optional[EmailStr]
+    avatar: Optional[str] = None
+    is_active: Optional[bool] = True
+    is_superuser: Optional[bool] = False
+    is_verified: Optional[bool] = False
+    first_name: Optional[str]
+    last_name: Optional[str]
+    middle_name: Optional[str] = None
+    phone: Optional[str]
+    address: Optional[str] = None
+    is_staff: Optional[bool] = False
+    is_legal_person: Optional[bool] = False
+    last_login: Optional[datetime] = None
+    date_joined: Optional[datetime]
+    role: Optional[Role] = 4
 
     class Config:
         orm_mode = True
@@ -58,7 +60,7 @@ class UserInDB(User):
     last_name: str
     address: Optional[str]
     is_staff: bool
-    role: Role
+    role: Optional[Role]
 
 
 class UserForAdminInDB(UserInDB):
@@ -90,13 +92,17 @@ class UserCreateInRegistration(User):
 class UserUpdate(User):
     """ Properties to receive via API on update """
 
-    password: Optional[str] = Form(...)
+    password: Optional[str]
 
 
 class UserVerifyEmail(BaseModel):
     """ Properties to verify Email via link """
     is_verified: bool
 
+
+# Необходимо для получения связанных моделей через "pydantic_model_creator".
+# Команда должны быть перед "pydantic_model_creator".
+Tortoise.init_models(["src.app.user.models"], "models")
 
 # Используется при создании пользователя при запросе данных у пользователя
 User_Create_Pydantic = pydantic_model_creator(UserModel,
@@ -128,6 +134,7 @@ User_Admin_Create_Pydantic = pydantic_model_creator(UserModel,
 User_Pydantic = pydantic_model_creator(UserModel,
                                        name='user',
                                        )
+
 Person_Pydantic = pydantic_model_creator(PersonType,
                                          name='role',
                                          )

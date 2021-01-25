@@ -21,6 +21,8 @@ from src.config.log_config import InterceptHandler
 from src.config import settings
 from src.app import routers
 
+from src.app.user.schemas import User_Pydantic
+
 
 logging.basicConfig(handlers=[InterceptHandler()], level=0)
 logger.debug('Hello!')
@@ -74,6 +76,7 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+print(User_Pydantic.schema_json(indent=4))
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=9000, reload=True)

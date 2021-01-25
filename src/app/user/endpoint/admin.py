@@ -13,13 +13,20 @@ admin_router = APIRouter()
 @admin_router.get('', response_model=List[schemas.UserForAdminInDB])
 async def get_all_users(user: models.UserModel = Depends(get_superuser)):
     """ Get all users """
-    return await models.UserModel.all().prefetch_related('role')
+    return await service.user_s.all()
 
 
 @admin_router.get('/{pk}', response_model=schemas.UserForAdminInDB)
 async def get_single_user(pk: int, user: models.UserModel = Depends(get_superuser)):
     """ Get user """
-    return await models.UserModel.get(id=pk).prefetch_related('role')
+    return await service.user_s.get(id=pk)
+    # return await models.UserModel.get(id=pk).prefetch_related('role')
+
+
+@admin_router.get('/pt/{pk}', response_model=schemas.Person_Pydantic)
+async def get_single_persontype(pk: int):
+    """ Get person type """
+    return await service.pt_s.get(id=pk)
 
 
 @admin_router.post('', response_model=schemas.UserForAdminInDB)
@@ -29,7 +36,7 @@ async def create_user(schema: schemas.User_Admin_Create_Pydantic, user: models.U
     return await service.user_s.create_user(schema)
 
 
-@admin_router.put('/{pk}', response_model=schemas.User_Pydantic)
+@admin_router.put('/{pk}', response_model=schemas.UserForAdminInDB)
 async def update_user(pk: int, schema: schemas.UserUpdate, user: models.UserModel = Depends(get_superuser)):
     """ Update user """
     return await service.user_s.update(schema, id=pk)

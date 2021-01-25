@@ -27,11 +27,13 @@ class UserModel(models.Model):
     # модель надо указать так: ключ словаря (models) как в файле main при регистрации черепахи
     # в пункте modules и далее после точки название модели которое есть в файлах,
     # перечисленных в значении (это список) этого ключа
-    role = fields.relational.ForeignKeyField('models.PersonType',
-                                             on_delete='CASCADE',
-                                             default=4,
-                                             related_name='usermodels'
-                                             )
+    role: fields.ForeignKeyRelation["PersonType"] = fields.ForeignKeyField('models.PersonType',
+                                                                           on_delete='CASCADE',
+                                                                           default=4,
+                                                                           related_name='usermodels'
+                                                                           )
+
+    person_type = fields.ReverseRelation["PersonType"]
 
     def __str__(self):
         return self.username

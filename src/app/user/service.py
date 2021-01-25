@@ -41,7 +41,7 @@ class UserService(BaseService):
     async def create_superuser(self, schema: schemas.UserCreateInRegistration):
         hash_password = get_password_hash(schema.dict().pop("password"))
         return await self.create(
-            schemas.UserCreate(
+            schemas.User_Create_Pydantic(
                 **schema.dict(exclude={"password"}),
                 password=hash_password,
                 is_active=True,
@@ -51,4 +51,12 @@ class UserService(BaseService):
         )
 
 
+class PersonTypeService(BaseService):
+    model = models.PersonType
+    create_schema = schemas.Person_Pydantic
+    update_schema = schemas.Person_Pydantic
+    get_schema = schemas.Person_Pydantic
+
+
 user_s = UserService()
+pt_s = PersonTypeService()
