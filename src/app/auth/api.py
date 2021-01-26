@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID4
 
 # from src.config.social_app import social_auth, redirect_uri
+from starlette.responses import Response
 
 from src.app.user import service, schemas
 
@@ -26,16 +27,40 @@ from .service import (
 auth_router = APIRouter()
 
 
-@auth_router.post("/login/access-token", response_model=Token)
-async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    """ OAuth2 compatible token login, get an access token for future requests
+@auth_router.post("/login")
+async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
+    """ OAuth2 compatible token login, get an access token and setting a cookie
     """
-    user = await service.user_s.authenticate(username=form_data.username, password=form_data.password)
+    user = await service.user_service.authenticate(username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    await service.user_s.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
+    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
+    token = create_token(user.id)["access_token"]
+    response.set_cookie(
+        "Session",
+        token,
+        max_age=1800,
+        # domain="localtest.me",
+        # secure=True,
+        httponly=True,
+        # samesite="lax",
+        expires=1800,
+    )
+    return {"ok": True}
+
+
+@auth_router.post("/login/access-token", response_model=Token)
+async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    """ OAuth2 compatible token login, get an access token for future requests
+    """
+    user = await service.user_service.authenticate(username=form_data.username, password=form_data.password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    elif not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
     return create_token(user.id)
 
 
@@ -62,7 +87,7 @@ async def confirm_email(link: UUID4):
 async def recover_password(email: str, task: BackgroundTasks):
     """ Password Recovery
     """
-    user = await service.user_s.get_obj(email=email)
+    user = await service.user_service.get_obj(email=email)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -82,7 +107,7 @@ async def reset_password(token: str = Body(...), new_password: str = Body(...)):
     email = verify_password_reset_token(token)
     if not email:
         raise HTTPException(status_code=400, detail="Invalid token")
-    user = await service.user_s.get_obj(email=email)
+    user = await service.user_service.get_obj(email=email)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -90,7 +115,7 @@ async def reset_password(token: str = Body(...), new_password: str = Body(...)):
         )
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    await service.user_s.change_password(user, new_password)
+    await service.user_service.change_password(user, new_password)
     return {"msg": "Password updated successfully"}
 
 

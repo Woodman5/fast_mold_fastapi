@@ -21,7 +21,7 @@ async def registration_user(new_user: schemas.User_Pydantic, task: BackgroundTas
     if await models.UserModel.filter(Q(username=new_user.username) | Q(email=new_user.email)).exists():
         return True
     else:
-        user = await service.user_s.create_user(new_user)
+        user = await service.user_service.create_user(new_user)
         verify = await Verification.create(user_id=user.id)
         task.add_task(
             send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
@@ -33,7 +33,7 @@ async def verify_registration_user(uuid: UUID4) -> bool:
     """ Подтверждение email пользователя """
     verify = await Verification.get(link=uuid).prefetch_related("user")
     if verify:
-        await service.user_s.update(schema=schemas.UserVerifyEmail(is_verified=True), id=verify.user.id)
+        await service.user_service.update(schema=schemas.UserVerifyEmail(is_verified=True), id=verify.user.id)
         await Verification.filter(link=uuid).delete()
         return True
     else:

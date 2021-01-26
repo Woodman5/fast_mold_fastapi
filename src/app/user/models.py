@@ -1,5 +1,6 @@
-from tortoise import fields, models
 import uuid
+
+from tortoise import fields, models, Tortoise
 
 
 class UserModel(models.Model):
@@ -52,12 +53,12 @@ class UserModel(models.Model):
 
     class PydanticMeta:
         backward_relations = True,
-        exclude = ('date_joined',)
 
 
 class PersonType(models.Model):
     """Person role model"""
 
+    id = fields.IntField(pk=True)
     person_type = fields.CharField(description='User type', max_length=100)
     person_slug = fields.CharField(description='Identifier', max_length=100)
     person_desc = fields.TextField(description='Description', default='', null=True)
@@ -70,3 +71,9 @@ class PersonType(models.Model):
 
     def __str__(self):
         return self.person_type
+
+
+# Необходимо для получения связанных моделей через "pydantic_model_creator".
+# Команда должны быть перед "pydantic_model_creator".
+Tortoise.init_models(["src.app.user.models"], "models")
+

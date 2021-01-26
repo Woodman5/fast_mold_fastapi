@@ -11,6 +11,12 @@
 <div id="app">
   <p>[[ message ]]</p>
   <button v-on:click="reverseMessage">Перевернуть сообщение</button>
+    <form action="/api/v1/auth/login" method="post">
+        Username: <input type="text" name="username" required>
+        <br>
+        Password: <input type="password" name="password" required>
+        <input type="submit" value="Login">
+        </form>
 </div>
 
     <script>

@@ -22,6 +22,14 @@ class UserService(BaseService):
             )
         )
 
+    async def create_user_by_admin(self, schema: schemas.UserRegistrationByAdminPydantic, **kwargs):
+        hash_password = get_password_hash(schema.dict().pop("password"))
+        return await self.create(
+            schemas.UserRegistrationByAdminPydantic(
+                **schema.dict(exclude={"password"}), password=hash_password, **kwargs
+            )
+        )
+
     async def authenticate(self, username: str, password: str) -> Optional[models.UserModel]:
         user = await self.model.get(username=username)
         if not user:
@@ -38,7 +46,7 @@ class UserService(BaseService):
     async def get_username_email(self, username: str, email: str):
         return await self.model.get_or_none(Q(username=username) | Q(email=email))
 
-    async def create_superuser(self, schema: schemas.UserCreateInRegistration):
+    async def create_superuser(self, schema: schemas.User_Admin_Create_Pydantic):
         hash_password = get_password_hash(schema.dict().pop("password"))
         return await self.create(
             schemas.User_Create_Pydantic(
@@ -47,16 +55,18 @@ class UserService(BaseService):
                 is_active=True,
                 is_superuser=True,
                 is_staff=True,
+                is_verified=False,
+                role=4,
             )
         )
 
 
 class PersonTypeService(BaseService):
     model = models.PersonType
-    create_schema = schemas.Person_Pydantic
-    update_schema = schemas.Person_Pydantic
-    get_schema = schemas.Person_Pydantic
+    create_schema = schemas.Person_Create_Pydantic
+    update_schema = schemas.Role
+    get_schema = schemas.Person_Get_Pydantic
 
 
-user_s = UserService()
-pt_s = PersonTypeService()
+user_service = UserService()
+person_type_service = PersonTypeService()

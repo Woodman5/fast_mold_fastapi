@@ -3,96 +3,33 @@ from datetime import datetime
 
 from fastapi import Body, Form
 from pydantic import BaseModel, EmailStr, UUID4
-from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
+from pydantic.fields import ModelField, Field
+from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
 from .models import UserModel, PersonType
 
-from tortoise import Tortoise
+
+Person_Create_Pydantic = pydantic_model_creator(PersonType,
+                                                name='Create role',
+                                                exclude_readonly=True,
+                                                exclude=('usermodels',)
+                                                )
+
+Person_Get_Pydantic = pydantic_model_creator(PersonType,
+                                             name='Get role',
+                                             exclude=('usermodels',)
+                                             )
 
 
-class RoleBase(BaseModel):
-    person_type: Optional[str] = None
-    person_slug: Optional[str] = None
-    person_desc: Optional[str] = None
-
-
-class RoleCreate(RoleBase):
-    pass
-
-
-class Role(RoleBase):
-    id: Optional[int] = None
-
-    class Config:
-        orm_mode = True
-
-
-class User(BaseModel):
-    """User model"""
-
-    user_uuid: Optional[UUID4]
-    username: Optional[str]
-    email: Optional[EmailStr]
-    avatar: Optional[str] = None
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    is_verified: Optional[bool] = False
-    first_name: Optional[str]
-    last_name: Optional[str]
-    middle_name: Optional[str] = None
-    phone: Optional[str]
-    address: Optional[str] = None
-    is_staff: Optional[bool] = False
-    is_legal_person: Optional[bool] = False
-    last_login: Optional[datetime] = None
-    date_joined: Optional[datetime]
-    role: Optional[Role] = 4
-
-    class Config:
-        orm_mode = True
-
-
-class UserInDB(User):
-    """ Свойства для получения через API """
-
-    username: str
-    email: EmailStr
-    first_name: str
-    last_name: str
-    address: Optional[str]
-    is_staff: bool
-    role: Optional[Role]
-
-
-class UserForAdminInDB(UserInDB):
-    """ Properties to receive via API by admin """
-
-    id: int
+class Role(PydanticModel):
+    id: Optional[int]
+    person_type: Optional[str]
+    person_slug: Optional[str]
+    person_desc: Optional[str]
 
 
 class UserLastLoginUpdate(BaseModel):
     """ Update last login time"""
-
     last_login: datetime
-
-
-class UserCreateInRegistration(User):
-    """ Свойства для получения через API при регистрации """
-
-    username: str
-    email: EmailStr
-    password: str = Form(...)
-    first_name: str
-    last_name: str
-    phone: str
-
-    class Config:
-        orm_mode = True
-
-
-class UserUpdate(User):
-    """ Properties to receive via API on update """
-
-    password: Optional[str]
 
 
 class UserVerifyEmail(BaseModel):
@@ -100,11 +37,58 @@ class UserVerifyEmail(BaseModel):
     is_verified: bool
 
 
-# Необходимо для получения связанных моделей через "pydantic_model_creator".
-# Команда должны быть перед "pydantic_model_creator".
-Tortoise.init_models(["src.app.user.models"], "models")
+class UserPydanticBase(PydanticModel):
+    """ Properties to receive via API by user """
 
-# Используется при создании пользователя при запросе данных у пользователя
+    user_uuid: Optional[UUID4]
+    username: Optional[str]
+    email: Optional[EmailStr]
+    avatar: Optional[str]
+    is_verified: Optional[bool]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    middle_name: Optional[str]
+    phone: Optional[str]
+    address: Optional[str]
+    date_joined: Optional[datetime]
+    role: Optional[Role]
+
+
+class UserPydantic(UserPydanticBase):
+    """ Additional properties to receive via API by admin """
+
+    id: Optional[int]
+    is_active: Optional[bool]
+    is_superuser: Optional[bool]
+    is_staff: Optional[bool]
+    is_legal_person: Optional[bool]
+    last_login: Optional[datetime]
+
+
+class UserUpdate(PydanticModel):
+    """ Properties to receive via API on update """
+
+    username: Optional[str]
+    email: Optional[EmailStr]
+
+    avatar: Optional[str]
+
+    first_name: Optional[str]
+    last_name: Optional[str]
+    middle_name: Optional[str]
+
+    phone: Optional[str]
+    address: Optional[str]
+
+    is_active: Optional[bool]
+    is_superuser: Optional[bool]
+    is_staff: Optional[bool]
+    is_legal_person: Optional[bool]
+
+    role_id: Optional[int]
+
+
+# Используется при создании пользователя при самостоятельной регистрации
 User_Create_Pydantic = pydantic_model_creator(UserModel,
                                               name='create_user',
                                               exclude_readonly=True,
@@ -116,7 +100,7 @@ User_Create_Pydantic = pydantic_model_creator(UserModel,
                                                        'is_legal_person',
                                                        'last_login',
                                                        'date_joined',
-                                                       'role',
+                                                       'role_id',
                                                        ),
                                               )
 
@@ -130,11 +114,18 @@ User_Admin_Create_Pydantic = pydantic_model_creator(UserModel,
                                                              ),
                                                     )
 
-# Используется при создании пользователя при получении данных из базы
+# Используется при запросе всех данных пользователя из базы
 User_Pydantic = pydantic_model_creator(UserModel,
                                        name='user',
                                        )
 
-Person_Pydantic = pydantic_model_creator(PersonType,
-                                         name='role',
-                                         )
+
+# Изменение типа поля после использования генератора "pydantic_model_creator"
+class UserRegistrationByAdminPydantic(User_Admin_Create_Pydantic):
+    """ Properties to validate user data for registration by admin """
+    email: EmailStr = Field(...)
+
+
+# print(Person_Get_Pydantic.schema_json(indent=4))
+# print(Person_Create_Pydantic.schema_json(indent=4))
+# print(User_Pydantic.schema_json(indent=4))

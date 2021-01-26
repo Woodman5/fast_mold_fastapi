@@ -1,48 +1,46 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, status
 
 from src.app.auth.permissions import get_superuser
 
-from src.app.user import models, schemas, service
+from src.app.user import models, schemas
+from src.app.user.service import user_service
 
 
 admin_router = APIRouter()
 
 
-@admin_router.get('', response_model=List[schemas.UserForAdminInDB])
+# CRUD for Users
+
+@admin_router.get('', response_model=List[schemas.UserPydantic])
 async def get_all_users(user: models.UserModel = Depends(get_superuser)):
     """ Get all users """
-    return await service.user_s.all()
+    return await user_service.all()
 
 
-@admin_router.get('/{pk}', response_model=schemas.UserForAdminInDB)
+@admin_router.get('/{pk}', response_model=schemas.UserPydantic)
 async def get_single_user(pk: int, user: models.UserModel = Depends(get_superuser)):
     """ Get user """
-    return await service.user_s.get(id=pk)
-    # return await models.UserModel.get(id=pk).prefetch_related('role')
+    return await user_service.get(id=pk)
 
 
-@admin_router.get('/pt/{pk}', response_model=schemas.Person_Pydantic)
-async def get_single_persontype(pk: int):
-    """ Get person type """
-    return await service.pt_s.get(id=pk)
-
-
-@admin_router.post('', response_model=schemas.UserForAdminInDB)
-async def create_user(schema: schemas.User_Admin_Create_Pydantic, user: models.UserModel = Depends(get_superuser)):
+@admin_router.post('', response_model=schemas.UserPydantic)
+async def create_user_by_admin(schema: schemas.UserRegistrationByAdminPydantic, user: models.UserModel = Depends(get_superuser)):
     """ Create user """
     # TODO исправить создание юзера, параметры: is_active & is_superuser & role & so on
-    return await service.user_s.create_user(schema)
+    return await user_service.create_user_by_admin(schema)
 
 
-@admin_router.put('/{pk}', response_model=schemas.UserForAdminInDB)
+@admin_router.put('/{pk}', response_model=schemas.UserPydantic)
 async def update_user(pk: int, schema: schemas.UserUpdate, user: models.UserModel = Depends(get_superuser)):
     """ Update user """
-    return await service.user_s.update(schema, id=pk)
+    return await user_service.update(schema, id=pk)
 
 
 @admin_router.delete('/{pk}', status_code=204)
 async def delete_user(pk: int, user: models.UserModel = Depends(get_superuser)):
     """ Delete user """
-    return await service.user_s.delete(id=pk)
+    await user_service.delete(id=pk)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
