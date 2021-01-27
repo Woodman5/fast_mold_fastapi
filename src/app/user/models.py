@@ -1,6 +1,8 @@
+import re
 import uuid
 
 from tortoise import fields, models, Tortoise
+from tortoise.validators import RegexValidator
 
 
 class UserModel(models.Model):
@@ -17,7 +19,9 @@ class UserModel(models.Model):
     first_name = fields.CharField(null=False, max_length=100)
     last_name = fields.CharField(null=False, max_length=150)
     middle_name = fields.CharField(null=True, max_length=100)
-    phone = fields.CharField(null=False, max_length=15)
+    phone = fields.CharField(null=False, max_length=15, validators=[
+                                    RegexValidator(r'^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$', re.I),
+                                    ])
     address = fields.TextField(null=True)
     is_staff = fields.BooleanField(default=False, null=False)
     is_legal_person = fields.BooleanField(default=False, null=False)

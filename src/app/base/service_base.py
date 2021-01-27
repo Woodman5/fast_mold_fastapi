@@ -10,6 +10,7 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 GetSchemaType = TypeVar("GetSchemaType", bound=BaseModel)
 QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
+ResponseSchemaType = TypeVar("ResponseSchemaType", bound=BaseModel)
 
 
 class BaseService:

@@ -15,6 +15,12 @@ SERVER_HOST = os.environ.get("SERVER_HOST", 'localhost')
 
 DEBUG = os.environ.get('DEBUG', False)
 
+# Documentation
+HIDE_DOCS = os.getenv("HIDE_DOCS", False)
+OPENAPI_URL = os.getenv("OPENAPI_URL", "/openapi.json")
+DOCS_URL = os.getenv("DOCS_URL", "/docs")
+REDOC_URL = os.getenv("REDOC_URL", "/redoc")
+
 # Secret key
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
@@ -65,5 +71,6 @@ EMAIL_TEST_USER = "yurywoodman@gmail.com"
 APPS_MODELS = [
     "src.app.user.models",
     "src.app.auth.models",
+    "src.app.handbook.models.mat_properties",
     "aerich.models",
 ]
