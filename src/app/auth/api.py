@@ -22,31 +22,39 @@ from .service import (
     registration_user,
     verify_registration_user
 )
-
+from ...config import settings
 
 auth_router = APIRouter()
+
+
+async def access_token(username: str, password: str):
+    """ Authentication
+    """
+    user = await service.user_service.authenticate(username, password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    elif not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()),
+                                      id=user.id)
+    return user
 
 
 @auth_router.post("/login")
 async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     """ OAuth2 compatible token login, get an access token and setting a cookie
     """
-    user = await service.user_service.authenticate(username=form_data.username, password=form_data.password)
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
+    user = await access_token(username=form_data.username, password=form_data.password)
     token = create_token(user.id)["access_token"]
     response.set_cookie(
-        "Session",
+        settings.SESSION_COOKIE_NAME,
         token,
-        max_age=1800,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        httponly=True,
         # domain="localtest.me",
         # secure=True,
-        httponly=True,
         # samesite="lax",
-        expires=1800,
+        # expires=1800,
     )
     return {"ok": True}
 
@@ -55,12 +63,7 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
 async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     """ OAuth2 compatible token login, get an access token for future requests
     """
-    user = await service.user_service.authenticate(username=form_data.username, password=form_data.password)
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()), id=user.id)
+    user = await access_token(username=form_data.username, password=form_data.password)
     return create_token(user.id)
 
 

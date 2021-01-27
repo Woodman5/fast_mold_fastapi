@@ -18,6 +18,9 @@ DEBUG = os.environ.get('DEBUG', False)
 # Secret key
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
+# Session cookie name
+SESSION_COOKIE_NAME = os.environ.get('SESSION_COOKIE', 'Session')
+
 # Rounds for pbkdf2 sha256 password hashing
 HASH_ROUNDS = os.environ.get('HASH_ROUNDS', 200000)
 

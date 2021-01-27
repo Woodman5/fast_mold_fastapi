@@ -33,25 +33,23 @@ class OAuth2PasswordBearerCookie(OAuth2):
 
     async def __call__(self, request: Request) -> Optional[str]:
         header_authorization: str = request.headers.get("Authorization")
-        print(request.headers.get("Authorization"))
-        print(request.cookies.get("Session"))
-        cookie_authorization: str = request.cookies.get("Session")
+        cookie_authorization: str = request.cookies.get(settings.SESSION_COOKIE_NAME)
 
         header_scheme, header_param = get_authorization_scheme_param(header_authorization)
 
+        h_authorization = False
+        c_authorization = False
+        param = None
+
         if header_scheme.lower() == "bearer":
-            authorization = True
+            h_authorization = True
             param = header_param
 
         elif cookie_authorization:
-            authorization = True
+            c_authorization = True
             param = cookie_authorization
 
-        else:
-            authorization = False
-            param = None
-
-        if not authorization and header_scheme.lower() != "bearer":
+        if not h_authorization and not c_authorization:
             if self.auto_error:
                 raise HTTPException(
                     status_code=HTTP_401_UNAUTHORIZED,
@@ -72,7 +70,6 @@ async def get_current_user(token: str = Security(reusable_oauth2)):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
-        print(token_data)
     except PyJWTError:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
