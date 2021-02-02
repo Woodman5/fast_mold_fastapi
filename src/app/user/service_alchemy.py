@@ -2,8 +2,10 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from src.app.user.models import User
+from src.app.user.models import User, PersonType
 from src.app.user.schemas_alchemy import User as UserCreate
+from src.app.user.schemas_alchemy import RoleFreddie
+
 from src.app.auth.security import verify_password, get_password_hash
 from src.app.base.service import CRUDBase
 
@@ -41,4 +43,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserCreate]):
         return user.is_superuser
 
 
+class RoleCRUD(CRUDBase[RoleFreddie, RoleFreddie, RoleFreddie]):
+    pass
+
+
 crud_user = CRUDUser(User)
+user_role = RoleCRUD(PersonType)

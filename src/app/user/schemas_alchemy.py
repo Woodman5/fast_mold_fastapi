@@ -2,6 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from pydantic import BaseModel
+from src.app.base.schemas_base import Schema
 
 
 class UserBase(BaseModel):
@@ -51,5 +52,43 @@ class User(UserBase):
         orm_mode = True
 
 
+class RoleFreddie(Schema):
+    id: int
+    person_type: str
+    person_slug: str
+    person_desc: Optional[str] = None
 
+    class Config:
+        default_readable_fields = {'person_type'}
+        orm_mode = True
+
+
+class RoleFreddieWrite(RoleFreddie):
+    id: int = None
+
+
+class UserFreddie(Schema):
+    id: int
+
+    username: str
+    email: str
+    password: str
+
+    first_name: str
+    last_name: str
+    middle_name: Optional[str]
+    phone: str
+    address: Optional[str]
+    is_active: bool
+    is_staff: bool
+    is_superuser: bool
+    is_legal_person: bool
+
+    last_login: Optional[datetime] = None
+    date_joined: datetime
+    role: RoleFreddie
+
+    class Config:
+        default_readable_fields = {'email', 'username'}
+        orm_mode = True
 
