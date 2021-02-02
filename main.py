@@ -21,25 +21,24 @@ from src.config.log_config import InterceptHandler
 from src.config import settings
 from src.app import routers
 
-logging.basicConfig(handlers=[InterceptHandler()], level=0)
-logger.debug('Hello!')
-logger.add("logs_1.log", rotation="5Mb")
-logger.add(sys.stdout, format="[{time:HH:mm:ss}] <lvl>{message}</lvl>", level="DEBUG")
+# logging.basicConfig(handlers=[InterceptHandler()], level=0)
+# logger.debug('Hello!')
+# logger.add("logs_1.log", rotation="5Mb")
+# logger.add(sys.stdout, format="[{time:HH:mm:ss}] <lvl>{message}</lvl>", level="DEBUG")
 
 
 openapi_url = settings.OPENAPI_URL
 docs_url = settings.DOCS_URL
 redoc_url = settings.REDOC_URL
 
-print(docs_url)
+
 hide_docs = settings.HIDE_DOCS
-print(hide_docs)
+
 if hide_docs == True:
     openapi_url = None
     docs_url = None
     redoc_url = None
 
-print(docs_url)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -82,14 +81,14 @@ async def read_root(request: Request):
 #     return await UserModel.get(id=8).prefetch_related('role')
 
 
-# todo In production, it's strongly recommended to setup a migration system to update your SQL schemas
-register_tortoise(
-    app,
-    db_url=settings.DATABASE_URI,
-    modules={"models": settings.APPS_MODELS},
-    generate_schemas=False,
-    add_exception_handlers=True,
-)
+# # todo In production, it's strongly recommended to setup a migration system to update your SQL schemas
+# register_tortoise(
+#     app,
+#     db_url=settings.DATABASE_URI,
+#     modules={"models": settings.APPS_MODELS},
+#     generate_schemas=False,
+#     add_exception_handlers=True,
+# )
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=9000, reload=True)

@@ -10,8 +10,9 @@ from starlette.requests import Request
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_401_UNAUTHORIZED
 from src.config import settings
 
-from src.app.user.models import UserModel
-from src.app.user import service
+from src.app.user.models import User
+# from src.app.user.models import UserModel
+from src.app.user import service_alchemy
 
 from .jwt import ALGORITHM
 from .schemas import TokenPayload
@@ -80,14 +81,14 @@ async def get_current_user(token: str = Security(reusable_oauth2)):
     return user
 
 
-def get_user(current_user: UserModel = Security(get_current_user)):
+def get_user(current_user: User = Security(get_current_user)):
     """ Проверка активный юзер или нет """
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
-def get_superuser(current_user: UserModel = Security(get_current_user)):
+def get_superuser(current_user: User = Security(get_current_user)):
     """ Проверка суперюзер или нет """
     if not current_user.is_superuser:
         raise HTTPException(

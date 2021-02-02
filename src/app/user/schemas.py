@@ -5,7 +5,7 @@ from fastapi import Body, Form
 from pydantic import BaseModel, EmailStr, UUID4
 from pydantic.fields import ModelField, Field
 from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
-from .models import UserModel, PersonType
+from .models import User, PersonType
 
 
 Person_Create_Pydantic = pydantic_model_creator(PersonType,
@@ -89,7 +89,7 @@ class UserUpdate(PydanticModel):
 
 
 # Используется при создании пользователя при самостоятельной регистрации
-User_Create_Pydantic = pydantic_model_creator(UserModel,
+User_Create_Pydantic = pydantic_model_creator(User,
                                               name='create_user',
                                               exclude_readonly=True,
                                               exclude=('user_uuid',
@@ -105,7 +105,7 @@ User_Create_Pydantic = pydantic_model_creator(UserModel,
                                               )
 
 # Используется при создании пользователя администратором
-User_Admin_Create_Pydantic = pydantic_model_creator(UserModel,
+User_Admin_Create_Pydantic = pydantic_model_creator(User,
                                                     name='create_user_by_admin',
                                                     exclude_readonly=True,
                                                     exclude=('user_uuid',
@@ -115,7 +115,7 @@ User_Admin_Create_Pydantic = pydantic_model_creator(UserModel,
                                                     )
 
 # Используется при запросе всех данных пользователя из базы
-User_Pydantic = pydantic_model_creator(UserModel,
+User_Pydantic = pydantic_model_creator(User,
                                        name='user',
                                        )
 

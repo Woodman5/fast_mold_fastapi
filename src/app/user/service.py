@@ -9,7 +9,7 @@ from ..base.service_base import BaseService
 
 
 class UserService(BaseService):
-    model = models.UserModel
+    model = models.User
     create_schema = schemas.User_Create_Pydantic
     update_schema = schemas.UserUpdate
     get_schema = schemas.User_Pydantic
@@ -30,7 +30,7 @@ class UserService(BaseService):
             )
         )
 
-    async def authenticate(self, username: str, password: str) -> Optional[models.UserModel]:
+    async def authenticate(self, username: str, password: str) -> Optional[models.User]:
         user = await self.model.get(username=username)
         if not user:
             return None
@@ -38,7 +38,7 @@ class UserService(BaseService):
             return None
         return user
 
-    async def change_password(self, obj: models.UserModel, new_password: str):
+    async def change_password(self, obj: models.User, new_password: str):
         hashed_password = get_password_hash(new_password)
         obj.password = hashed_password
         await obj.save()
