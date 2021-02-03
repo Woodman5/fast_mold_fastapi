@@ -14,37 +14,8 @@ from src.app.user.models import User, PersonType
 from src.app.user.schemas_alchemy import UserFreddie, RoleFreddie, RoleFreddieWrite
 from src.app.user.service_alchemy import crud_user, user_role
 
-from src.app.base.viewsets import FieldedViewset, PaginatedListViewset, route, ModelViewSet
 
 router = APIRouter()
-
-#
-# class RoleViewSet(
-#     # FieldedViewset,  # Allows retrieving non-default schema fields from query params
-#     # PaginatedListViewset,  # Adds paginator parameter with limit/offset query params
-#     ModelViewSet
-# ):
-#
-#     schema = RoleFreddie
-#     write_schema = RoleFreddieWrite
-#     model = PersonType
-#
-#     pk_type = Union[int, str]
-#     secondary_lookup_field = PersonType.person_slug
-
-    # Default viewset pagination options are set here
-    # class Paginator:
-    #     default_limit = 10
-    #     max_limit = 100
-    #
-    # # Async generators are supported as well
-    # async def list(self, *, paginator, fields, request):
-    #     for i in range(1, paginator.limit + 1):
-    #         item_id = i + paginator.offset
-    #         yield RoleFreddie(id=item_id, title=f'Freddie #{item_id}')
-
-
-# router.include_router(RoleViewSet(), prefix='/test/')
 
 
 @router.get("/", response_model=List[UserFreddie])

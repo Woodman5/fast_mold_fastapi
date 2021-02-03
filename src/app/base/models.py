@@ -1,45 +1,32 @@
-from tortoise import fields, models
-from tortoise.validators import Validator
-from tortoise.exceptions import ValidationError
+from src.config.sqlalchemy_conf import Base
+from sqlalchemy import Column, Integer, String, Boolean, Text
 
-
-class TimestampMixin:
-    created_at = fields.DatetimeField(null=True, auto_now_add=True)
-    modified_at = fields.DatetimeField(null=True, auto_now=True)
+from sqlalchemy_utils import Timestamp, generic_repr
 
 
 class NameMixin:
-    name = fields.CharField(200, unique=True)
+    name = Column(String(200), unique=True, index=True, nullable=False)
+    slug = Column(String(200), unique=True, index=True, nullable=False)
 
 
-class AbstractBaseModel(models.Model):
-    id = fields.IntField(pk=True)
-
-    class Meta:
-        abstract = True
+class DescriptionMixin:
+    description = Column(Text, index=True)
 
 
-class MaxValueValidator(Validator):
-    """
-    A validator to validate whether the given value is less or equal than the required value.
-    """
-    def __init__(self, max_value: int):
-        self.max_value = max_value
-
-    def __call__(self, value: int):
-        if value > self.max_value:
-            raise ValidationError(f"Value '{value}' is greater than max value")
+class SoftDelete:
+    item_removed = Column(Boolean, default=False)
 
 
-class MinValueValidator(Validator):
-    """
-    A validator to validate whether the given value is greater or equal than the required value.
-    """
-    def __init__(self, min_value: int):
-        self.min_value = min_value
+class AbstractBaseModel(Base):
+    __abstract__ = True
 
-    def __call__(self, value: int):
-        if value < self.min_value:
-            raise ValidationError(f"Value '{value}' is less than max value")
+    id = Column(Integer, unique=True, primary_key=True, autoincrement=True)
+
+
+@generic_repr
+class Model(AbstractBaseModel, NameMixin, Timestamp, SoftDelete, DescriptionMixin):
+
+    def __str__(self):
+        return f"{type(self).__name__}(id: {self.id}, name: {self.name}"
 
 
