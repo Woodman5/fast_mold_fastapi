@@ -4,7 +4,7 @@ from tortoise.query_utils import Q
 
 from .models import mat_properties
 from . import schemas
-from ..base.service_base import BaseService
+from ..base.service_base_tortoise import BaseService
 
 
 class HardnessScalesService(BaseService):

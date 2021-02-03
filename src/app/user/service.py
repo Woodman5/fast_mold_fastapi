@@ -5,7 +5,7 @@ from tortoise.query_utils import Q
 from src.app.auth.security import verify_password, get_password_hash
 
 from . import schemas, models
-from ..base.service_base import BaseService
+from ..base.service_base_tortoise import BaseService
 
 
 class UserService(BaseService):

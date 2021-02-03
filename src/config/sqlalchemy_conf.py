@@ -6,8 +6,7 @@ from .settings import DATABASE_URI
 
 
 engine = create_engine(
-    DATABASE_URI,
-    # echo=True,
+    DATABASE_URI, echo=True
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

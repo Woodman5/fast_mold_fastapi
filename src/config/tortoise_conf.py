@@ -7,7 +7,7 @@ TORTOISE_ORM = {
             "credentials": {
                     "database": "postgres",
                     "host": "127.0.0.1",
-                    "password": "Rfhnjy5",
+                    "password": "postgres",
                     "port": 5432,
                     "user": "postgres",
             }

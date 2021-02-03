@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Response, status
 
-from src.app.base.service_base import (
+from src.app.base.service_base_tortoise import (
     CreateSchemaType,
     UpdateSchemaType,
     ResponseSchemaType
