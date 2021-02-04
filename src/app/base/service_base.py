@@ -9,6 +9,9 @@ from src.config.sqlalchemy_conf import Base
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+GetSchemaType = TypeVar("GetSchemaType", bound=BaseModel)
+QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
+ResponseSchemaType = TypeVar("ResponseSchemaType", bound=BaseModel)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
@@ -36,8 +39,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
 
     def update(
-        self, db_session: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType
+        self, db_session: Session, *, id: int, obj_in: UpdateSchemaType
     ) -> ModelType:
+        db_obj = db_session.query(self.model).get(id)
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(skip_defaults=True)
         for field in obj_data:

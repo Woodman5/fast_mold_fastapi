@@ -5,16 +5,16 @@ from fastapi import Body, Form
 from pydantic import BaseModel, EmailStr, UUID4
 from pydantic.fields import ModelField, Field
 from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
-from .models import User, PersonType
+from .models import User, Role
 
 
-Person_Create_Pydantic = pydantic_model_creator(PersonType,
+Person_Create_Pydantic = pydantic_model_creator(Role,
                                                 name='Create role',
                                                 exclude_readonly=True,
                                                 exclude=('usermodels',)
                                                 )
 
-Person_Get_Pydantic = pydantic_model_creator(PersonType,
+Person_Get_Pydantic = pydantic_model_creator(Role,
                                              name='Get role',
                                              exclude=('usermodels',)
                                              )

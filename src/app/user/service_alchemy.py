@@ -2,19 +2,22 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from src.app.user.models import User, PersonType
-from src.app.user.schemas_alchemy import User as UserCreate
-from src.app.user.schemas_alchemy import RoleFreddie
+from src.app.user.models import User, Role
+import src.app.user.schemas_alchemy as schemas
+
 
 from src.app.auth.security import verify_password, get_password_hash
-from src.app.base.service import CRUDBase
+from src.app.base.service_base import CRUDBase
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserCreate]):
+class CRUDUser(CRUDBase[User, schemas.User, schemas.User]):
     def get_by_email(self, db_session: Session, *, email: str) -> Optional[User]:
         return db_session.query(User).filter(User.email == email).first()
 
-    def create(self, db_session: Session, *, obj_in: UserCreate) -> User:
+    def get_by_name(self, db_session: Session, *, name: str) -> Optional[User]:
+        return db_session.query(User).filter(User.username == name).first()
+
+    def create(self, db_session: Session, *, obj_in: schemas.User) -> User:
         db_obj = User(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
@@ -43,9 +46,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserCreate]):
         return user.is_superuser
 
 
-class RoleCRUD(CRUDBase[RoleFreddie, RoleFreddie, RoleFreddie]):
+class RoleCRUD(CRUDBase[Role, schemas.Role, schemas.Role]):
     pass
 
 
 crud_user = CRUDUser(User)
-user_role = RoleCRUD(PersonType)
+user_role_service = RoleCRUD(Role)

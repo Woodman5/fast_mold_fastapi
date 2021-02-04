@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
 from src.app.base.models import Model, AbstractBaseModel, SoftDelete
-from sqlalchemy_utils import Timestamp, generic_repr, URLType, PhoneNumberType, UUIDType, EmailType
+from sqlalchemy_utils import Timestamp, generic_repr, URLType, PhoneNumberType, UUIDType, EmailType, PasswordType
 
 
 @generic_repr
