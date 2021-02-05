@@ -1,25 +1,31 @@
 from typing import List, Optional
 from datetime import datetime
+import uuid
 
 from pydantic import BaseModel, UUID4, AnyUrl
-from src.app.base.schemas_base import Schema
+from sqlalchemy_utils import PhoneNumberType
+# from src.app.base.schemas_base import Schema
 
 
 class UserBase(BaseModel):
-    user_uuid: UUID4
     username: str
     email: str
     first_name: str
-    last_name: str
-    middle_name: str
     phone: str
-    address: str
-    is_active: bool
-    is_staff: bool
-    is_superuser: bool
-    is_legal_person: bool
-    is_verified: bool
-    avatar: AnyUrl
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class UserDefaults(UserBase):
+    user_uuid: UUID4 = uuid.uuid4()
+    is_active: bool = True
+    is_staff: bool = False
+    is_superuser: bool = False
+    is_legal_person: bool = False
+    is_verified: bool = False
+    item_removed: bool = False
+    role_id: int = 5
 
 
 class UserInDB(UserBase):
@@ -37,19 +43,22 @@ class RoleCreate(RoleBase):
 
 
 class Role(RoleBase):
-    id: int
+    id: Optional[int]
     updated: Optional[datetime] = None
-    created: datetime
-    item_removed: bool
+    created: Optional[datetime]
+    item_removed: Optional[bool]
     # users: List[User] = []
 
     class Config:
         orm_mode = True
 
 
-class User(UserBase):
+class UserFull(UserDefaults):
     id: int
-    item_removed: bool
+    last_name: Optional[str]
+    middle_name: Optional[str]
+    address: Optional[str]
+    avatar: Optional[AnyUrl]
     updated: Optional[datetime] = None
     created: datetime
     role: Role

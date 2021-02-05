@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Iterator, Mapping, Optional, Pattern, Se
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseConfig, BaseModel, ConstrainedStr, create_model
 
-from .utils.utils import is_async_iterable, is_awaitable, is_iterable, is_mappable
+# from .utils.utils import is_async_iterable, is_awaitable, is_iterable, is_mappable
 
 
 class SchemaConfig(BaseConfig):

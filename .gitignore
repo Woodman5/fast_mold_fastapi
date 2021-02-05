@@ -139,5 +139,5 @@ dmypy.json
 node_modules/
 
 
-!src/db/migrations/.gitkeep
+!migrations/versions/.gitkeep
 # src/db/migrations/*

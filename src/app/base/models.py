@@ -24,7 +24,7 @@ class AbstractBaseModel(Base):
 
 
 @generic_repr
-class Model(AbstractBaseModel, NameMixin, Timestamp, SoftDelete, DescriptionMixin):
+class Model(NameMixin, Timestamp, SoftDelete, DescriptionMixin):
 
     def __str__(self):
         return f"{type(self).__name__}(id: {self.id}, name: {self.name}"

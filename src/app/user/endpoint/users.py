@@ -4,23 +4,24 @@ from fastapi import APIRouter, Depends, Body, Form
 
 from src.app.auth.permissions import get_user
 
-from src.app.user import models, schemas
-# from src.app.user.service import user_service
+from src.app.user.models import User as UserModel
+from src.app.user.schemas_alchemy import UserFull, UserInDB
+from src.app.user.service_alchemy import user_service
+from src.app.base.router_base import get_customized_router
 
 
-user_router = APIRouter()
+user_router = get_customized_router('/user',
+                                    user_service,
+                                    UserFull,
+                                    create_schema=UserInDB,
+                                    update_schema=UserFull,
+                                    name='User'
+                                    )
 
 
-@user_router.get('/me', response_model=schemas.UserPydanticBase)
-async def user_me(current_user: models.UserModel = Depends(get_user)):
-    """ Get current user by user"""
-    if current_user:
-        await current_user.fetch_related('role')
-        return current_user
-
-
-# @user_router.get('/me', response_model=schemas.UserPublic)
-# def user_me(current_user: models.User = Depends(get_user)):
-#     """ Get current user """
+# @user_router.get('/me', response_model=User)
+# def user_me(current_user: UserModel = Depends(get_user)):
+#     """ Get current user by user"""
 #     if current_user:
+#         # current_user.fetch_related('role')
 #         return current_user

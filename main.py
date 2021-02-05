@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # from fastapi_utils.timing import add_timing_middleware, record_timing
 
-from tortoise.contrib.fastapi import register_tortoise
+# from tortoise.contrib.fastapi import register_tortoise
 
 from src.config.log_config import InterceptHandler
 
