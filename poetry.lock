@@ -421,6 +421,26 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "ormar"
+version = "0.9.2"
+description = "A simple async ORM with fastapi in mind and pydantic validation."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+databases = "*"
+pydantic = ">=1.5"
+sqlalchemy = "*"
+typing-extensions = "*"
+
+[package.extras]
+mysql = ["aiomysql", "pymysql"]
+orjson = ["orjson"]
+postgresql = ["asyncpg", "psycopg2"]
+sqlite = ["aiosqlite"]
+
+[[package]]
 name = "passlib"
 version = "1.7.4"
 description = "comprehensive password hashing framework supporting over 30 schemes"
@@ -788,7 +808,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "393ca9ece59bb9f6b2f0c6db6e91e1c04b88022af8607aaff903ec15284c3480"
+content-hash = "0247bc09a595633ae58ec2de07a453b982ad0d49b63983ba02e053581aa0f809"
 
 [metadata.files]
 aiofiles = [
@@ -1044,6 +1064,10 @@ orjson = [
     {file = "orjson-3.4.8-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:2599ac12c5992dfb44870e71bd96ce6b0df7f7248a9548664810e889685b967b"},
     {file = "orjson-3.4.8-cp39-none-win_amd64.whl", hash = "sha256:c7ddf86586810cffa37b24150f6f29c193d80322ad1d807be791cb2a1b8954e8"},
     {file = "orjson-3.4.8.tar.gz", hash = "sha256:08ac106a4e67c7dd3010a948d336294a7549c62677bee9752011347c7688af37"},
+]
+ormar = [
+    {file = "ormar-0.9.2-py3-none-any.whl", hash = "sha256:9ff8d4f5d967f23b8dd4195f308afab3bb59910d8e2118f5c78ca9a4e8545839"},
+    {file = "ormar-0.9.2.tar.gz", hash = "sha256:4ce6958cbbb536e2bbbd6adf43da52d6a8730d80f4cc9f5a63f8739c140f8d1c"},
 ]
 passlib = [
     {file = "passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1"},
