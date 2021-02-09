@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Response, status
 
-from src.app.auth.permissions import get_superuser
+# from src.app.auth.permissions import get_superuser
 
 from src.app.user import models, schemas_alchemy
 from src.app.user.service_alchemy import user_role_service
@@ -11,11 +11,32 @@ from src.app.base.router_base import get_customized_router
 
 role_router = get_customized_router('/role',
                                     user_role_service,
-                                    schemas_alchemy.Role,
-                                    create_schema=schemas_alchemy.Role,
-                                    update_schema=schemas_alchemy.Role,
+                                    # schemas_alchemy.Role,
+                                    # create_schema=schemas_alchemy.Role,
+                                    # update_schema=schemas_alchemy.Role,
                                     name='Role'
                                     )
+
+# role_router = APIRouter()
+#
+#
+# @role_router.get("/role/", response_model=List[schemas_alchemy.RoleBase])
+# async def get_items():
+#     items = await models.Role.objects.all()
+#     return items
+#
+#
+# @role_router.get("/role/{item_id}", response_model=schemas_alchemy.RoleBase)
+# async def get_items(item_id: int):
+#     item = await models.Role.objects.get(pk=item_id)
+#     return item
+#
+#
+# @role_router.post("/role/", response_model=schemas_alchemy.Role)
+# async def create_item(role: schemas_alchemy.RoleBase):
+#     # await role.save()
+#     role_item = await models.Role.objects.create(**role.dict())
+#     return role_item
 
 
 # CRUD for Person types

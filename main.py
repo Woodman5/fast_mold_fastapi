@@ -17,6 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # from tortoise.contrib.fastapi import register_tortoise
 
 from src.config.log_config import InterceptHandler
+from src.config.ormar_settings import database
 
 from src.config import settings
 from src.app import routers
@@ -49,6 +50,7 @@ app = FastAPI(
     redoc_url=redoc_url
 )
 
+app.state.database = database
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,6 +66,20 @@ templates = Jinja2Templates(directory="src/templates")
 
 # app.include_router(auth_router)
 app.include_router(routers.api_router, prefix=settings.API_V1_STR)
+
+
+@app.on_event("startup")
+async def startup() -> None:
+    database_ = app.state.database
+    if not database_.is_connected:
+        await database_.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    database_ = app.state.database
+    if database_.is_connected:
+        await database_.disconnect()
 
 
 @app.get("/", response_class=HTMLResponse, tags=['Root'])
