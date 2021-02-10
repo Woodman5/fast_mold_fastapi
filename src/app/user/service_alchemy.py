@@ -47,7 +47,7 @@ from src.app.base.service_base import CRUDBase
 #         return user.is_superuser
 
 
-class RoleCRUD(CRUDBase[Role, schemas.Role, schemas.Role]):
+class RoleCRUD(CRUDBase):
     pass
 
 

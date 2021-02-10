@@ -38,8 +38,10 @@ class RoleBase(BaseModel):
     description: Optional[str] = None
 
 
-class RoleCreate(RoleBase):
-    pass
+class RoleUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str]
 
 
 class Role(RoleBase):

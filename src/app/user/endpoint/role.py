@@ -9,11 +9,11 @@ from src.app.user.service_alchemy import user_role_service
 from src.app.base.router_base import get_customized_router
 
 
-role_router = get_customized_router('/role',
-                                    user_role_service,
-                                    # schemas_alchemy.Role,
-                                    # create_schema=schemas_alchemy.Role,
-                                    # update_schema=schemas_alchemy.Role,
+role_router = get_customized_router(url='/role',
+                                    service=user_role_service,
+                                    response_schema=schemas_alchemy.RoleBase,
+                                    create_schema=schemas_alchemy.RoleBase,
+                                    update_schema=schemas_alchemy.RoleUpdate,
                                     name='Role'
                                     )
 

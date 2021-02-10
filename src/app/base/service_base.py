@@ -1,13 +1,12 @@
-from typing import List, Optional, Generic, TypeVar, Type
+from typing import List, Optional, Generic, TypeVar, Type, Sequence
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 # from src.config.sqlalchemy_conf import Base
-from ormar import Model
+from ormar import Model, QuerySet
 
-ModelType = TypeVar("ModelType", bound=Model)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 GetSchemaType = TypeVar("GetSchemaType", bound=BaseModel)
@@ -15,8 +14,9 @@ QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
 ResponseSchemaType = TypeVar("ResponseSchemaType", bound=BaseModel)
 
 
-class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: ModelType):
+class CRUDBase:
+
+    def __init__(self, model: Type[Model]):
         """
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
         **Parameters**
@@ -25,45 +25,27 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    # @role_router.get("/role/", response_model=List[schemas_alchemy.RoleBase])
-    # async def get_items():
-    #     items = await models.Role.objects.all()
-    #     return items
+    async def get(self, pk: int) -> Optional[Model]:
+        return await self.model.objects.get(id=pk)
 
-    async def get(self, id: int) -> Optional[ModelType]:
-        return await self.model.objects.get(id=id)
-
-    # async def get_by(self, kwargs) -> Optional[ModelType]:
-    #     print(**kwargs)
-    #     return await self.model.objects.get(**kwargs)
-
-    async def get_multi(self, skip=0, limit=100) -> List[ModelType]:
+    async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
         return await self.model.objects.offset(skip).limit(limit).all()
 
-    # def create(self, *, db_session: Session, obj_in: CreateSchemaType) -> ModelType:
-    #     obj_in_data = jsonable_encoder(obj_in)
-    #     db_obj = self.model(**obj_in_data)
-    #     db_session.add(db_obj)
-    #     db_session.commit()
-    #     db_session.refresh(db_obj)
-    #     return db_obj
-    #
-    # def update(
-    #     self, db_session: Session, *, id: int, obj_in: UpdateSchemaType
-    # ) -> ModelType:
-    #     db_obj = db_session.query(self.model).get(id)
-    #     obj_data = jsonable_encoder(db_obj)
-    #     update_data = obj_in.dict(skip_defaults=True)
-    #     for field in obj_data:
-    #         if field in update_data:
-    #             setattr(db_obj, field, update_data[field])
-    #     db_session.add(db_obj)
-    #     db_session.commit()
-    #     db_session.refresh(db_obj)
-    #     return db_obj
-    #
-    # def remove(self, db_session: Session, *, id: int) -> ModelType:
-    #     obj = db_session.query(self.model).get(id)
-    #     db_session.delete(obj)
-    #     db_session.commit()
-    #     return obj
+    async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
+        return await self.model.objects.paginate(page, page_size).all()
+
+    async def get_all(self) -> Sequence[Optional[Model]]:
+        return await self.model.objects.all()
+
+    async def create(self, obj_in: CreateSchemaType) -> Model:
+        item = self.model(**obj_in.dict())
+        return await item.save()
+
+    async def update(self, pk: int, obj_in: UpdateSchemaType) -> Model:
+        item = await self.model.objects.get(id=pk)
+        await item.update(**obj_in.dict(exclude_unset=True))
+        return item
+
+    async def remove(self, pk: int) -> int:
+        return await self.model.objects.delete(id=pk)
+
