@@ -25,7 +25,6 @@ class UserDefaults(UserBase):
     is_legal_person: bool = False
     is_verified: bool = False
     item_removed: bool = False
-    role_id: int = 5
 
 
 class UserInDB(UserBase):

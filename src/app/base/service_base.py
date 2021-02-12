@@ -28,6 +28,9 @@ class CRUDBase:
     async def get(self, pk: int) -> Optional[Model]:
         return await self.model.objects.get(id=pk)
 
+    async def get_select(self, pk: int) -> Optional[Model]:
+        return await self.model.objects.get(id=pk)
+
     async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
         return await self.model.objects.offset(skip).limit(limit).all()
 

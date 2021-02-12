@@ -10,17 +10,16 @@ from src.config import settings
 from src.config.sqlalchemy_conf import get_db
 from src.app.auth.permissions import get_superuser, get_user
 
-from src.app.user.models import User, PersonType
-from src.app.user.schemas_alchemy import UserFreddie, RoleFreddie, RoleFreddieWrite
-from src.app.user.service_alchemy import crud_user, user_role
+from src.app.user.models import User, Role
+from src.app.user.schemas_alchemy import UserFull
+from src.app.user.service_alchemy import user_service
 
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[UserFreddie])
+@router.get("/", response_model=List[UserFull])
 def read_users(
-    db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
     # current_user: DBUser = Depends(get_superuser),
@@ -28,22 +27,8 @@ def read_users(
     """
     Retrieve users.
     """
-    users = crud_user.get_multi(db, skip=skip, limit=limit)
+    users = user_service.get_multi(skip=skip, limit=limit)
     return users
-
-
-@router.get("/roles/", response_model=List[RoleFreddie])
-def read_roles(
-    db: Session = Depends(get_db),
-    skip: int = 0,
-    limit: int = 100,
-    # current_user: DBUser = Depends(get_superuser),
-):
-    """
-    Retrieve user roles.
-    """
-    roles = user_role.get_multi(db, skip=skip, limit=limit)
-    return roles
 
 
 # @router.post("/", response_model=User)
@@ -132,16 +117,15 @@ def read_roles(
 #     return user
 
 
-@router.get("/{user_id}", response_model=UserFreddie)
-def read_user_by_id(
+@router.get("/{user_id}", response_model=UserFull)
+async def read_user_by_id(
     user_id: int,
     # current_user: DBUser = Depends(get_user),
-    db: Session = Depends(get_db),
 ):
     """
     Get a specific user by id.
     """
-    user = crud_user.get(db, id=user_id)
+    user = await user_service.get(pk=user_id)
     # if user == current_user:
     #     return user
     # if not crud_user.user.is_superuser(current_user):
@@ -149,25 +133,6 @@ def read_user_by_id(
     #         status_code=400, detail="The user doesn't have enough privileges"
     #     )
     return user
-
-
-@router.get("/roles/{role_id}", response_model=RoleFreddie)
-def read_role_by_id(
-    role_id: int,
-    # current_user: DBUser = Depends(get_user),
-    db: Session = Depends(get_db),
-):
-    """
-    Get a specific role by id.
-    """
-    role = user_role.get(db, id=role_id)
-    # if user == current_user:
-    #     return user
-    # if not crud_user.user.is_superuser(current_user):
-    #     raise HTTPException(
-    #         status_code=400, detail="The user doesn't have enough privileges"
-    #     )
-    return role
 
 
 # @router.put("/{user_id}", response_model=UserCreate)

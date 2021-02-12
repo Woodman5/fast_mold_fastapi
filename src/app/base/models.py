@@ -1,32 +1,48 @@
-from src.config.sqlalchemy_conf import Base
-from sqlalchemy import Column, Integer, String, Boolean, Text
+import datetime
 
-from sqlalchemy_utils import Timestamp, generic_repr
+import ormar
+from src.config.ormar_settings import database, metadata
 
 
 class NameMixin:
-    name = Column(String(200), unique=True, index=True, nullable=False)
-    slug = Column(String(200), unique=True, index=True, nullable=False)
+    name: str = ormar.String(max_length=200, unique=True, index=True, nullable=False)
+    slug: str = ormar.String(max_length=200, unique=True, index=True, nullable=False)
 
 
 class DescriptionMixin:
-    description = Column(Text, index=True)
+    description: str = ormar.Text(index=True, nullable=True)
 
 
-class SoftDelete:
-    item_removed = Column(Boolean, default=False)
+class SoftDeleteMixin:
+    item_removed = ormar.Boolean(default=False)
 
 
-class AbstractBaseModel(Base):
-    __abstract__ = True
+class TimestampMixin:
+    created: datetime.datetime = ormar.DateTime(nullable=False)
+    updated: datetime.datetime = ormar.DateTime(nullable=True)
 
-    id = Column(Integer, unique=True, primary_key=True, autoincrement=True)
 
+class AbstractBaseModel(ormar.Model):
 
-@generic_repr
-class Model(NameMixin, Timestamp, SoftDelete, DescriptionMixin):
+    class Meta:
+        abstract = True
+        metadata = metadata
+        database = database
+
+    id: int = ormar.Integer(primary_key=True)
 
     def __str__(self):
-        return f"{type(self).__name__}(id: {self.id}, name: {self.name}"
+        return f"{type(self).__name__}(id: {self.id}, name: {self.name})"
+
+    def __repr__(self):
+        return f"<{type(self).__name__}(id: {self.id})>"
+
+
+class ModelMixin(ormar.Model, NameMixin, DescriptionMixin, SoftDeleteMixin, TimestampMixin):
+
+    class Meta:
+        abstract = True
+
+
 
 
