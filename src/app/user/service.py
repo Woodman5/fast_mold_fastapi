@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Sequence
 from ormar import Model
 
 from src.app.user.models import Role, User
@@ -15,6 +15,9 @@ class CRUDUser(CRUDBase):
         # user = await self.model.objects.get(id=pk)
         # await user.role.load()
         return user
+
+    async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
+        return await self.model.objects.offset(skip).limit(limit).select_related('role').all()
 
     # def get_by_email(self, email: str, **kwargs) -> Optional[User]:
     #     return db_session.query(User).filter(User.email == email).first()

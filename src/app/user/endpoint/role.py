@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Response, status
 # from src.app.auth.permissions import get_superuser
 
 from src.app.user import models, schemas_alchemy
-from src.app.user.service_alchemy import user_role_service
+from src.app.user.service import user_role_service
 from src.app.base.router_base import get_customized_router
 
 

@@ -12,7 +12,7 @@ from src.config import settings
 
 from src.app.user.models import User
 # from src.app.user.models import UserModel
-from src.app.user import service_alchemy
+from src.app.user import service
 
 from .jwt import ALGORITHM
 from .schemas import TokenPayload
@@ -68,14 +68,16 @@ reusable_oauth2 = OAuth2PasswordBearerCookie(tokenUrl="/api/v1/auth/login/access
 async def get_current_user(token: str = Security(reusable_oauth2)):
     """ Check auth user
     """
+    print('----1----')
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
+        print(token_data)
     except PyJWTError:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
         )
-    user = await service.user_service.get_obj(id=token_data.user_id)
+    user = await service.user_service.get(pk=token_data.user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

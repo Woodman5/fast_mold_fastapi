@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-# from src.app.auth.api import auth_router
+from src.app.auth.api import auth_router
 from src.app.user.endpoint import role  # , users, admin,
 from src.app.user.endpoint import user_alchemy
 # from src.app.handbook.endpoint.handbook import handbook_router

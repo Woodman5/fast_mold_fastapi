@@ -12,23 +12,41 @@ from src.app.auth.permissions import get_superuser, get_user
 
 from src.app.user.models import User, Role
 from src.app.user.schemas_alchemy import UserFull
-from src.app.user.service_alchemy import user_service
+from src.app.user.service import user_service
 
 
 router = APIRouter()
 
 
 @router.get("/", response_model=List[UserFull])
-def read_users(
+async def read_users(
     skip: int = 0,
     limit: int = 100,
-    # current_user: DBUser = Depends(get_superuser),
+    current_user=Depends(get_superuser),
 ):
     """
     Retrieve users.
     """
-    users = user_service.get_multi(skip=skip, limit=limit)
+    users = await user_service.get_multi(skip=skip, limit=limit)
     return users
+
+
+@router.get("/{user_id}", response_model=UserFull)
+async def read_user_by_id(
+    user_id: int,
+    # current_user: DBUser = Depends(get_user),
+):
+    """
+    Get a specific user by id.
+    """
+    user = await user_service.get(pk=user_id)
+    # if user == current_user:
+    #     return user
+    # if not crud_user.user.is_superuser(current_user):
+    #     raise HTTPException(
+    #         status_code=400, detail="The user doesn't have enough privileges"
+    #     )
+    return user
 
 
 # @router.post("/", response_model=User)
@@ -115,24 +133,6 @@ def read_users(
 #     user_in = UserCreate(password=password, email=email, full_name=full_name)
 #     user = crud_user.user.create(db, obj_in=user_in)
 #     return user
-
-
-@router.get("/{user_id}", response_model=UserFull)
-async def read_user_by_id(
-    user_id: int,
-    # current_user: DBUser = Depends(get_user),
-):
-    """
-    Get a specific user by id.
-    """
-    user = await user_service.get(pk=user_id)
-    # if user == current_user:
-    #     return user
-    # if not crud_user.user.is_superuser(current_user):
-    #     raise HTTPException(
-    #         status_code=400, detail="The user doesn't have enough privileges"
-    #     )
-    return user
 
 
 # @router.put("/{user_id}", response_model=UserCreate)
