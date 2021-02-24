@@ -11,7 +11,7 @@ from src.config.sqlalchemy_conf import get_db
 from src.app.auth.permissions import get_superuser, get_user
 
 from src.app.user.models import User, Role
-from src.app.user.schemas_alchemy import UserFull
+from src.app.user.schemas_alchemy import UserFull, UserBase, UserInDB
 from src.app.user.service import user_service
 
 
@@ -49,28 +49,28 @@ async def read_user_by_id(
     return user
 
 
-# @router.post("/", response_model=User)
-# def create_user(
-#     *,
-#     db: Session = Depends(get_db),
-#     user_in: UserCreate,
-#     current_user: DBUser = Depends(get_current_active_superuser),
-# ):
-#     """
-#     Create new user.
-#     """
-#     user = crud_user.user.get_by_email(db, email=user_in.email)
-#     if user:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="The user with this username already exists in the system.",
-#         )
-#     user = crud_user.user.create(db, obj_in=user_in)
-#     if config.EMAILS_ENABLED and user_in.email:
-#         send_new_account_email(
-#             email_to=user_in.email, username=user_in.email, password=user_in.password
-#         )
-#     return user
+@router.post("/")  # , response_model=UserFull)
+async def create_user(
+    user_in: UserInDB,
+    # current_user: DBUser = Depends(get_current_active_superuser),
+):
+    """
+    Create new user.
+    """
+    user = await user_service.get_by_email(email=user_in.email)
+    if user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this username or email already exists.",
+        )
+    print('------1------')
+    print(user_in)
+    user = await user_service.create(obj_in=user_in)
+    # if config.EMAILS_ENABLED and user_in.email:
+    #     send_new_account_email(
+    #         email_to=user_in.email, username=user_in.email, password=user_in.password
+    #     )
+    return user
 
 
 # @router.put("/me", response_model=UserCreate)

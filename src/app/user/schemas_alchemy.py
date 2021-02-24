@@ -31,6 +31,16 @@ class UserInDB(UserBase):
     password: str
 
 
+class UserLastLoginUpdate(BaseModel):
+    """ Update last login time"""
+    last_login: datetime
+
+
+class UserVerifyEmail(BaseModel):
+    """ Properties to verify Email via link """
+    is_verified: bool
+
+
 class RoleBase(BaseModel):
     name: str
     slug: str
@@ -62,6 +72,7 @@ class UserFull(UserDefaults):
     avatar: Optional[AnyUrl]
     updated: Optional[datetime] = None
     created: datetime
+    last_login: Optional[datetime] = None
     role: Role
     # role_id: int
 

@@ -1,4 +1,4 @@
-import uuid
+import datetime
 import ormar
 from src.app.base.models import AbstractBaseModel, ModelMixin, SoftDeleteMixin, TimestampMixin
 
@@ -20,7 +20,7 @@ class User(AbstractBaseModel, SoftDeleteMixin, TimestampMixin):
     class Meta(ormar.ModelMeta):
         tablename = "useraccounts_user"
 
-    user_uuid = ormar.UUID(uuid_format='hex', index=True, unique=True, nullable=False, default=uuid.uuid4())
+    user_uuid = ormar.UUID(uuid_format='hex', index=True, unique=True, nullable=False)
     username = ormar.String(max_length=30, unique=True, index=True, nullable=False)
     email = ormar.String(max_length=255, unique=True, index=True, nullable=False)
     password = ormar.String(max_length=255, nullable=False)
@@ -35,6 +35,7 @@ class User(AbstractBaseModel, SoftDeleteMixin, TimestampMixin):
     is_superuser = ormar.Boolean(default=False)
     is_legal_person = ormar.Boolean(default=False)
     is_verified = ormar.Boolean(default=False)
+    last_login = ormar.DateTime(nullable=True)
     role = ormar.ForeignKey(Role)
 
     def __str__(self):

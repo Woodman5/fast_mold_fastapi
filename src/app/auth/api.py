@@ -10,7 +10,7 @@ from pydantic import UUID4
 # from src.config.social_app import social_auth, redirect_uri
 from starlette.responses import Response
 
-from src.app.user import service, schemas
+from src.app.user import service, schemas_alchemy
 
 from .schemas import Token, Msg
 from .jwt import create_token
@@ -35,8 +35,7 @@ async def access_token(username: str, password: str):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    await service.user_service.update(schema=schemas.UserLastLoginUpdate(last_login=datetime.datetime.now()),
-                                      id=user.id)
+    await user.update(last_login=datetime.datetime.now())
     return user
 
 
@@ -68,7 +67,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas.User_Create_Pydantic, task: BackgroundTasks):
+async def user_registration(new_user: schemas_alchemy.UserBase, task: BackgroundTasks):
     """ Регистрация пользователя
     """
     user = await registration_user(new_user, task)

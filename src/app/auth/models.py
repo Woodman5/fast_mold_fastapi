@@ -1,8 +1,15 @@
-from tortoise import models, fields
+import ormar
+from src.config.ormar_settings import database, metadata
+from src.app.user.models import User
 
 
-class Verification(models.Model):
+class Verification(ormar.Model):
     """ Модель для подтверждения регистрации пользователя """
 
-    link = fields.UUIDField(pk=True)
-    user = fields.ForeignKeyField('models.UserModel', related_name='verification')
+    class Meta:
+        abstract = True
+        metadata = metadata
+        database = database
+
+    link = ormar.UUID(primary_key=True)
+    user = ormar.ForeignKey(User)
