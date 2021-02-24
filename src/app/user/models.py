@@ -1,4 +1,3 @@
-import datetime
 import ormar
 from src.app.base.models import AbstractBaseModel, ModelMixin, SoftDeleteMixin, TimestampMixin
 

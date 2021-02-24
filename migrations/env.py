@@ -9,7 +9,7 @@ from alembic import context
 
 sys.path = ['', '..'] + sys.path[1:]
 
-from src.config.alembic_models import Base
+from src.config.alembic_models import metadata
 from src.config.settings import DATABASE_URI
 
 # this is the Alembic Config object, which provides
@@ -24,7 +24,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -51,6 +51,7 @@ def run_migrations_offline():
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        user_module_prefix='sa.'
     )
 
     with context.begin_transaction():
@@ -74,7 +75,7 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata, user_module_prefix='sa.'
         )
 
         with context.begin_transaction():
