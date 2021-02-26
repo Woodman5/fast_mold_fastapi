@@ -3,10 +3,10 @@ from typing import Tuple
 from passlib.context import CryptContext
 from passlib import pwd
 
-from src.config.settings import HASH_ROUNDS
+from src.config.settings import settings
 
 
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated='auto', pbkdf2_sha256__rounds=HASH_ROUNDS)
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated='auto', pbkdf2_sha256__rounds=settings.hash_rounds)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

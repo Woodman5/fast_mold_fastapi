@@ -63,8 +63,6 @@ async def create_user(
             status_code=400,
             detail="The user with this username or email already exists.",
         )
-    print('------1------')
-    print(user_in)
     user = await user_service.create(obj_in=user_in)
     # if config.EMAILS_ENABLED and user_in.email:
     #     send_new_account_email(

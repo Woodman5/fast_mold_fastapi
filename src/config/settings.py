@@ -1,76 +1,82 @@
 import os
+from pydantic import BaseSettings, PostgresDsn, Field
 
 
-DEV = bool(os.environ.get('DEV', True))
+class Settings(BaseSettings):
 
-if DEV:
-    from dotenv import load_dotenv
-    load_dotenv()
+    dev: bool = True
+
+    project_name: str = "FastMold"
+    version: str = "0.1.0"
+    description: str = "Materials DB and process engineering"
+
+    server_host: str = 'localhost'
+    server_port: int = 8000
+
+    api_v1_str: str = "/api/v1"
+
+    debug: bool = False
+
+    # Documentation
+    hide_docs: bool = False
+    openapi_url: str = "/openapi.json"
+    docs_url: str = "/docs"
+    redoc_url: str = "/redoc"
+
+    # Secret key
+    secret_key: str = 'je+5gyn7w4hqfb_gtf=e)@t!0s(K+_+69@sg%6f+u(dtvs0u9u'
+
+    # Session cookie name
+    session_cookie_name: str = 'Session'
+
+    # Rounds for pbkdf2 sha256 password hashing
+    hash_rounds: int = 200000
+
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # Token 60 minutes * 24 hours * 7 days = 7 days
+    access_token_expire_minutes: int = 60 * 24 * 7
+
+    # CORS
+    backend_cors_origins: list = [
+        "http://localhost",
+        "http://localhost:4200",
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:9000",
+    ]
+
+    postgres_user: str
+    postgres_password: str
+    postgres_host: str
+    postgres_db: str
+
+    users_open_registration: bool = True
+
+    # Email
+    emails_from_name: str = project_name
+    email_reset_token_expire_hours: int = 24
+    email_templates_dir: str = "src/templates/email-templates/ready"
+    smtp_ssl: bool
+    smtp_port: int
+    smtp_host: str
+    smtp_user: str
+    smtp_password: str
+    emails_from_email: str
+
+    emails_enabled: bool = False
+    email_test_user: str = "yurywoodman@gmail.com"
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+
+    @property
+    def database_uri(self):
+        return f'postgresql://{self.postgres_user}:' \
+               f'{self.postgres_password}@' \
+               f'{self.postgres_host}:5432/' \
+               f'{self.postgres_db}'
 
 
-PROJECT_NAME = "FastMold"
-VERSION = "0.1.0"
-DESCRIPTION = "Materials DB and process engineering"
-SERVER_HOST = os.environ.get("SERVER_HOST", 'localhost')
-
-DEBUG = os.environ.get('DEBUG', False)
-
-# Documentation
-HIDE_DOCS = os.getenv("HIDE_DOCS", False)
-OPENAPI_URL = os.getenv("OPENAPI_URL", "/openapi.json")
-DOCS_URL = os.getenv("DOCS_URL", "/docs")
-REDOC_URL = os.getenv("REDOC_URL", "/redoc")
-
-# Secret key
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
-# Session cookie name
-SESSION_COOKIE_NAME = os.environ.get('SESSION_COOKIE', 'Session')
-
-# Rounds for pbkdf2 sha256 password hashing
-HASH_ROUNDS = os.environ.get('HASH_ROUNDS', 200000)
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-API_V1_STR = os.environ.get('API_V1_STR', "/api/v1")
-
-# Token 60 minutes * 24 hours * 7 days = 7 days
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 60 * 24 * 7))
-
-# CORS
-BACKEND_CORS_ORIGINS = [
-    "http://localhost",
-    "http://localhost:4200",
-    "http://localhost:3000",
-    "http://localhost:8080",
-    "http://localhost:9000",
-]
-
-DATABASE_URI = f'postgresql://{os.environ.get("POSTGRES_USER")}:' \
-               f'{os.environ.get("POSTGRES_PASSWORD")}@' \
-               f'{os.environ.get("POSTGRES_HOST")}:5432/' \
-               f'{os.environ.get("POSTGRES_DB")}'
-
-USERS_OPEN_REGISTRATION = os.environ.get('USERS_OPEN_REGISTRATION', True)
-
-EMAILS_FROM_NAME = PROJECT_NAME
-EMAIL_RESET_TOKEN_EXPIRE_HOURS = os.environ.get("EMAIL_RESET_TOKEN_EXPIRE_HOURS", 24)
-EMAIL_TEMPLATES_DIR = "src/templates/email-templates/ready"
-
-# Email
-SMTP_SSL = os.environ.get("SMTP_SSL")
-SMTP_PORT = os.environ.get("SMTP_PORT")
-SMTP_HOST = os.environ.get("SMTP_HOST")
-SMTP_USER = os.environ.get("SMTP_USER")
-SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
-EMAILS_FROM_EMAIL = os.environ.get("EMAILS_FROM_EMAIL")
-
-EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
-EMAIL_TEST_USER = "yurywoodman@gmail.com"
-
-APPS_MODELS = [
-    "src.app.user.models",
-    "src.app.auth.models",
-    "src.app.handbook.models.mat_properties",
-    "aerich.models",
-]
+settings = Settings()
