@@ -5,8 +5,8 @@ from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
-from src.config import settings
-# from src.utils import send_new_account_email
+from src.config.settings import settings
+from src.app.auth.send_email import send_new_account_email
 from src.config.sqlalchemy_conf import get_db
 from src.app.auth.permissions import get_superuser, get_user
 
@@ -64,10 +64,10 @@ async def create_user(
             detail="The user with this username or email already exists.",
         )
     user = await user_service.create(obj_in=user_in)
-    # if config.EMAILS_ENABLED and user_in.email:
-    #     send_new_account_email(
-    #         email_to=user_in.email, username=user_in.email, password=user_in.password
-    #     )
+    if settings.emails_enabled and user_in.email:
+        send_new_account_email(
+            email_to=user_in.email, username=user_in.email, password=user_in.password
+        )
     return user
 
 
