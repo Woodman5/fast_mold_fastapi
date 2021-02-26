@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config.log_config import InterceptHandler
 from src.config.ormar_settings import database
 
-from src.config import settings
+from src.config.settings import settings
 from src.app import routers
 
 # logging.basicConfig(handlers=[InterceptHandler()], level=0)
@@ -28,12 +28,12 @@ from src.app import routers
 # logger.add(sys.stdout, format="[{time:HH:mm:ss}] <lvl>{message}</lvl>", level="DEBUG")
 
 
-openapi_url = settings.OPENAPI_URL
-docs_url = settings.DOCS_URL
-redoc_url = settings.REDOC_URL
+openapi_url = settings.openapi_url
+docs_url = settings.docs_url
+redoc_url = settings.redoc_url
 
 
-hide_docs = settings.HIDE_DOCS
+hide_docs = settings.hide_docs
 
 if hide_docs == True:
     openapi_url = None
@@ -42,9 +42,9 @@ if hide_docs == True:
 
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    description=settings.DESCRIPTION,
-    version=settings.VERSION,
+    title=settings.project_name,
+    description=settings.description,
+    version=settings.version,
     openapi_url=openapi_url,
     docs_url=docs_url,
     redoc_url=redoc_url
@@ -54,7 +54,7 @@ app.state.database = database
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=settings.backend_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,7 +65,7 @@ app.mount("/static", StaticFiles(directory="src/static"), name="static")
 templates = Jinja2Templates(directory="src/templates")
 
 # app.include_router(auth_router)
-app.include_router(routers.api_router, prefix=settings.API_V1_STR)
+app.include_router(routers.api_router, prefix=settings.api_v1_str)
 
 
 @app.on_event("startup")
@@ -107,4 +107,5 @@ async def read_root(request: Request):
 # )
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=9000, reload=True)
+    print(settings.dict())
+    uvicorn.run("main:app", host=settings.server_host, port=settings.server_port, reload=True)

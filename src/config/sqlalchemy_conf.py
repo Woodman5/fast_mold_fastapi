@@ -2,11 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from .settings import DATABASE_URI
+from .settings import settings
 
 
 engine = create_engine(
-    DATABASE_URI,
+    settings.database_uri,
     echo=True,
 )
 
