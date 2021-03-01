@@ -67,7 +67,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas_alchemy.UserBase, task: BackgroundTasks):
+async def user_registration(new_user: schemas_alchemy.UserInDB, task: BackgroundTasks):
     """ Регистрация пользователя
     """
     user = await registration_user(new_user, task)

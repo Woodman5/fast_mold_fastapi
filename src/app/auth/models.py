@@ -7,7 +7,7 @@ class Verification(ormar.Model):
     """ Модель для подтверждения регистрации пользователя """
 
     class Meta:
-        abstract = True
+        tablename = "useraccounts_verification"
         metadata = metadata
         database = database
 

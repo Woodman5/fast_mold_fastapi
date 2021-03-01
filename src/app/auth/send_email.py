@@ -2,6 +2,8 @@ from src.app.base.utils.email import send_email
 from src.config.settings import settings
 from pathlib import Path
 
+from pydantic import UUID4
+
 
 def send_test_email(email_to: str):
     """ Отправка тестового письма
@@ -45,7 +47,7 @@ def send_reset_password_email(email_to: str, email: str, token: str):
     )
 
 
-def send_new_account_email(email_to: str, username: str, password: str, uuid: str):
+def send_new_account_email(email_to: str, username: str, password: str, uuid: UUID4):
     """ Отправка письма при создании пользователя
     """
     project_name = settings.project_name

@@ -4,7 +4,7 @@ from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta
 from typing import Optional
 
-from src.config import settings
+from src.config.settings import settings
 
 from src.app.user import schemas_alchemy, service, models
 from .models import Verification
@@ -15,18 +15,18 @@ from pydantic import UUID4
 password_reset_jwt_subject = "preset"
 
 
-async def registration_user(new_user: schemas_alchemy.UserBase, task: BackgroundTasks) -> bool:
+async def registration_user(new_user: schemas_alchemy.UserInDB, task: BackgroundTasks) -> bool:
     """Регистрация пользователя"""
     username_exists = await models.User.objects.filter(username=new_user.username).exists()
     user_email_exists = await models.User.objects.filter(email=new_user.email).exists()
     if username_exists or user_email_exists:
         return True
     else:
-        user = await service.user_service.create_user(new_user)
-        verify = await Verification.create(user_id=user.id)
-        # task.add_task(
-        #     send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
-        # )
+        user = await service.user_service.create(new_user)
+        verify = await Verification.objects.create(user=user, link=user.user_uuid)
+        task.add_task(
+            send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
+        )
         return False
 
 
@@ -42,7 +42,7 @@ async def verify_registration_user(uuid: UUID4) -> bool:
 
 
 def generate_password_reset_token(email: str):
-    delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
+    delta = timedelta(hours=settings.email_reset_token_expire_hours)
     now = datetime.utcnow()
     expires = now + delta
     exp = expires.timestamp()
@@ -56,7 +56,7 @@ def generate_password_reset_token(email: str):
 
 def verify_password_reset_token(token: str) -> Optional[str]:
     try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        decoded_token = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
         assert decoded_token["sub"] == password_reset_jwt_subject
         return decoded_token["email"]
     except InvalidTokenError:

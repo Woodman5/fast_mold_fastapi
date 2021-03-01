@@ -29,6 +29,7 @@ class UserDefaults(UserBase):
 
 class UserInDB(UserBase):
     password: str
+    user_uuid: Optional[UUID4]
 
 
 class UserLastLoginUpdate(BaseModel):

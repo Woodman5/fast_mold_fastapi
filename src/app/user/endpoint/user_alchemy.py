@@ -66,7 +66,10 @@ async def create_user(
     user = await user_service.create(obj_in=user_in)
     if settings.emails_enabled and user_in.email:
         send_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
+            email_to=user_in.email,
+            username=user_in.email,
+            password=user_in.password,
+            uuid=user_in.user_uuid
         )
     return user
 

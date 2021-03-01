@@ -39,13 +39,11 @@ class CRUDUser(CRUDBase):
         obj_in = obj_in.dict()
         hash_password = get_password_hash(obj_in.pop("password"))
         customer = await Role.objects.filter(slug='customer').get()
-        created = datetime.datetime.now()
-        user_uuid = uuid.uuid4()
+        obj_in['created'] = datetime.datetime.now()
+        obj_in['user_uuid'] = uuid.uuid4()
         user = await self.model.objects.create(**obj_in,
                                                password=hash_password,
                                                role=customer,
-                                               created=created,
-                                               user_uuid=user_uuid,
                                                )
         return user
 
