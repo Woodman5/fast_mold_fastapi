@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 
 from src.config.settings import settings
@@ -36,6 +36,21 @@ def read_user_me(
     Get current user.
     """
     return me_user
+
+
+@router.delete("/remove", status_code=204)
+async def remove_user_by_id(
+    user_id: int,
+    current_user=Depends(get_superuser),
+):
+    """
+    Delete a specific user by id.
+    """
+    try:
+        await user_service.remove(pk=user_id)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f'Deletion failed. {e}')
 
 
 @router.get("/{user_id}", response_model=UserFull)

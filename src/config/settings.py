@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     emails_from_email: str
 
     emails_enabled: bool = False
-    email_test_user: str = "yurywoodman@gmail.com"
+    email_test_user: str = "youriywoodman@gmail.com"
 
     class Config:
         env_file = '.env'

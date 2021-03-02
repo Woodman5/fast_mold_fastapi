@@ -33,6 +33,15 @@ class HardnessScalesFull(HardnessScalesGet):
     updated: datetime
 
 
+class HardnessScalesUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    hs_max: Optional[int]
+    hs_min: Optional[int]
+    hs_units: Optional[str]
+    description: Optional[str]
+
+
 class CommonHardnessBase(BaseModel):
     name: str
     slug: str
@@ -50,3 +59,9 @@ class CommonHardnessFull(CommonHardnessGet):
     item_removed: bool
     created: datetime
     updated: datetime
+
+
+class CommonHardnessUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str]

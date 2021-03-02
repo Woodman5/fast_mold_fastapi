@@ -15,14 +15,14 @@ hs_router = get_customized_router(url='/hs',
                                   service=service.hardness_scales_service,
                                   response_schema=schemas.HardnessScalesGet,
                                   create_schema=schemas.HardnessScalesBase,
-                                  update_schema=schemas.HardnessScalesBase,
+                                  update_schema=schemas.HardnessScalesUpdate,
                                   name='Hardness Scale'
                                   )
 ch_router = get_customized_router(url='/ch',
                                   service=service.common_hardness_service,
                                   response_schema=schemas.CommonHardnessGet,
                                   create_schema=schemas.CommonHardnessBase,
-                                  update_schema=schemas.CommonHardnessBase,
+                                  update_schema=schemas.CommonHardnessUpdate,
                                   name='Common Hardness')
 
 handbook_router.include_router(hs_router, tags=['Hardness Scales'])

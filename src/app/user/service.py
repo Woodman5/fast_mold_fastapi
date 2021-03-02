@@ -55,6 +55,18 @@ class CRUDUser(CRUDBase):
             return None
         return user
 
+    async def remove(self, pk: int) -> int:
+        if 'item_removed' in self.model.__fields__.keys():
+            item = await self.model.objects.get(id=pk)
+            time_for_name = int(datetime.datetime.now().timestamp())
+            new_name = f'deletedrow_{item.username}_{time_for_name}'
+            email_parts = item.email.split('@')
+            new_email = f'deletedrow_{email_parts[0]}_{time_for_name}@{email_parts[1]}'
+            await item.update(username=new_name, email=new_email, item_removed=True)
+        else:
+            await self.model.objects.delete(id=pk)
+        return 1
+
     def is_active(self, user: User) -> bool:
         return user.is_active
 

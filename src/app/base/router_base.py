@@ -55,15 +55,15 @@ def get_customized_router(url: str,
         except Exception:
             return Response(status_code=status.HTTP_404_NOT_FOUND)
 
-    @router.post('/', response_model=response_schema, summary=f'{name}, post item')
+    @router.post('/', summary=f'{name}, post item')
     async def create(item: create_schema):
         """ Create Item """
-        return await service.create(obj_in=item)
+        return await service.create(obj_in=item, response_model=response_schema)
 
-    @router.put('/{pk}', response_model=response_schema, summary=f'{name}, change item')
+    @router.put('/{pk}', summary=f'{name}, change item')
     async def update(pk: int, schema: update_schema):
         """ Update Item """
-        return await service.update(obj_in=schema, pk=pk)
+        return await service.update(obj_in=schema, pk=pk, response_model=response_schema)
 
     @router.delete('/{pk}', status_code=204, summary=f'{name}, delete item')
     async def delete(pk: int):
