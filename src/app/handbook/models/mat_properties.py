@@ -1,23 +1,31 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
-from sqlalchemy.orm import relationship
+import datetime
+import ormar
+from src.app.base.models_base import (
+    AbstractBaseModel,
+    ModelMixin,
+    SoftDeleteMixin,
+    TimestampMixin,
+    NameMixin,
+    DescriptionMixin,
+)
 
-from src.app.base.models import Model, AbstractBaseModel, SoftDelete
-from sqlalchemy_utils import Timestamp, generic_repr, URLType, PhoneNumberType, UUIDType, EmailType
 
-
-class HardnessScales(Model):
+class HardnessScales(AbstractBaseModel, ModelMixin):
     """ Hardness Scales Model """
 
-    __tablename__ = "Handbook_hardnessscales"
+    class Meta(ormar.ModelMeta):
+        tablename = "handbook_hardnessscales"
 
-    hs_min = Column(Integer, default=0)
-    hs_max = Column(Integer, default=100)
-    hs_units = Column(String(15))
+    hs_min = ormar.Integer(default=0)
+    hs_max = ormar.Integer(default=100)
+    hs_units = ormar.String(max_length=30, nullable=True)
 
 
-class CommonHardness(Model):
+class CommonHardness(AbstractBaseModel, ModelMixin):
     """ Human readable hardness Model """
 
-    __tablename__ = "Handbook_commonhardness"
+    class Meta(ormar.ModelMeta):
+        tablename = "handbook_commonhardness"
+
 
 

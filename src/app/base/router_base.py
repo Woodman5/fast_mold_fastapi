@@ -1,10 +1,8 @@
 from typing import List, Optional, Dict, Type
 
 from fastapi import APIRouter, Response, status, Depends, HTTPException
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
-from src.config.sqlalchemy_conf import get_db
 from src.app.base.service_base import (
     CreateSchemaType,
     UpdateSchemaType,
@@ -19,9 +17,16 @@ def get_customized_router(url: str,
                           create_schema: Type[BaseModel],
                           update_schema: Type[BaseModel] = None,
                           name: str = 'Item',
+                          dependencies=None,
                           ):
 
-    router = APIRouter(prefix=f"{url}")
+    if dependencies is None:
+        dependencies = []
+
+    router = APIRouter(
+        prefix=f"{url}",
+        dependencies=dependencies,
+    )
 
     if not update_schema:
         update_schema = create_schema
@@ -42,18 +47,18 @@ def get_customized_router(url: str,
         page_size = 20 if not page_size else page_size
         return await service.get_page(page=page, page_size=page_size)
 
-    @router.get('/{pk}', response_model=response_schema, summary=f'{name}, get single item by Id')
+    @router.get('/{pk}', summary=f'{name}, get single item by Id')
     async def get_single(pk: int):
         """ Get single item """
-        return await service.get(pk=pk)
+        try:
+            return await service.get(pk=pk, response_model=response_schema)
+        except Exception:
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
 
     @router.post('/', response_model=response_schema, summary=f'{name}, post item')
     async def create(item: create_schema):
         """ Create Item """
-        try:
-            return await service.create(obj_in=item)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=e.detail)
+        return await service.create(obj_in=item)
 
     @router.put('/{pk}', response_model=response_schema, summary=f'{name}, change item')
     async def update(pk: int, schema: update_schema):
@@ -70,4 +75,3 @@ def get_customized_router(url: str,
             raise HTTPException(status_code=400, detail=f'Deletion failed. {e.detail}')
 
     return router
-

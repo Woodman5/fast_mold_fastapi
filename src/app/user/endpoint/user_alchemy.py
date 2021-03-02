@@ -1,16 +1,12 @@
-from typing import List, Union
+from typing import List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from pydantic.networks import EmailStr
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
+
 
 from src.config.settings import settings
 from src.app.auth.send_email import send_new_account_email
-from src.config.sqlalchemy_conf import get_db
 from src.app.auth.permissions import get_superuser, get_user
 
-from src.app.user.models import User, Role
 from src.app.user.schemas_alchemy import UserFull, UserBase, UserInDB
 from src.app.user.service import user_service
 
@@ -31,10 +27,21 @@ async def read_users(
     return users
 
 
+# TODO change output scheme
+@router.get("/me")  # , response_model=UserFull)
+def read_user_me(
+    me_user=Depends(get_user),
+):
+    """
+    Get current user.
+    """
+    return me_user
+
+
 @router.get("/{user_id}", response_model=UserFull)
 async def read_user_by_id(
     user_id: int,
-    # current_user: DBUser = Depends(get_user),
+    current_user=Depends(get_superuser),
 ):
     """
     Get a specific user by id.
@@ -52,7 +59,7 @@ async def read_user_by_id(
 @router.post("/")  # , response_model=UserFull)
 async def create_user(
     user_in: UserInDB,
-    # current_user: DBUser = Depends(get_current_active_superuser),
+    current_user=Depends(get_superuser),
 ):
     """
     Create new user.
@@ -66,7 +73,10 @@ async def create_user(
     user = await user_service.create(obj_in=user_in)
     if settings.emails_enabled and user_in.email:
         send_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
+            email_to=user_in.email,
+            username=user_in.email,
+            password=user_in.password,
+            uuid=user_in.user_uuid
         )
     return user
 
@@ -93,17 +103,6 @@ async def create_user(
 #         user_in.email = email
 #     user = crud_user.user.update(db, db_obj=current_user, obj_in=user_in)
 #     return user
-
-
-# @router.get("/me", response_model=UserCreate)
-# def read_user_me(
-#     db: Session = Depends(get_db),
-#     current_user: DBUser = Depends(get_user),
-# ):
-#     """
-#     Get current user.
-#     """
-#     return current_user
 
 
 # @router.post("/open", response_model=UserCreate)

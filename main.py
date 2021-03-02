@@ -87,25 +87,6 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "id": 42})
 
 
-# @app.get("/users", response_model=List[User])
-# async def get_users():
-#     return await UserModel.all().prefetch_related('role')
-#
-#
-# @app.get("/me", response_model=User)
-# async def get_me():
-#     return await UserModel.get(id=8).prefetch_related('role')
-
-
-# # todo In production, it's strongly recommended to setup a migration system to update your SQL schemas
-# register_tortoise(
-#     app,
-#     db_url=settings.DATABASE_URI,
-#     modules={"models": settings.APPS_MODELS},
-#     generate_schemas=False,
-#     add_exception_handlers=True,
-# )
-
 if __name__ == "__main__":
     print(settings.dict())
     uvicorn.run("main:app", host=settings.server_host, port=settings.server_port, reload=True)

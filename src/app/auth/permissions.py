@@ -8,10 +8,9 @@ from fastapi.security.utils import get_authorization_scheme_param
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from starlette.requests import Request
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_401_UNAUTHORIZED
-from src.config import settings
+from src.config.settings import settings
 
 from src.app.user.models import User
-# from src.app.user.models import UserModel
 from src.app.user import service
 
 from .jwt import ALGORITHM
@@ -34,7 +33,7 @@ class OAuth2PasswordBearerCookie(OAuth2):
 
     async def __call__(self, request: Request) -> Optional[str]:
         header_authorization: str = request.headers.get("Authorization")
-        cookie_authorization: str = request.cookies.get(settings.SESSION_COOKIE_NAME)
+        cookie_authorization: str = request.cookies.get(settings.session_cookie_name)
 
         header_scheme, header_param = get_authorization_scheme_param(header_authorization)
 
@@ -68,11 +67,9 @@ reusable_oauth2 = OAuth2PasswordBearerCookie(tokenUrl="/api/v1/auth/login/access
 async def get_current_user(token: str = Security(reusable_oauth2)):
     """ Check auth user
     """
-    print('----1----')
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
-        print(token_data)
     except PyJWTError:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
@@ -92,6 +89,7 @@ def get_user(current_user: User = Security(get_current_user)):
 
 def get_superuser(current_user: User = Security(get_current_user)):
     """ Проверка суперюзер или нет """
+    # print(current_user)
     if not current_user.is_superuser:
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"

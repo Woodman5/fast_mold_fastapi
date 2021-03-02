@@ -6,7 +6,7 @@ from src.app.user.models import User
 class Verification(ormar.Model):
     """ Модель для подтверждения регистрации пользователя """
 
-    class Meta(ormar.ModelMeta):
+    class Meta:
         tablename = "useraccounts_verification"
         metadata = metadata
         database = database

@@ -29,6 +29,7 @@ class UserDefaults(UserBase):
 
 class UserInDB(UserBase):
     password: str
+    user_uuid: Optional[UUID4]
 
 
 class UserLastLoginUpdate(BaseModel):
@@ -45,6 +46,13 @@ class RoleBase(BaseModel):
     name: str
     slug: str
     description: Optional[str] = None
+
+
+class RoleGet(BaseModel):
+    id: Optional[int]
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str]
 
 
 class RoleUpdate(BaseModel):

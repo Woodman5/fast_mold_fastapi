@@ -10,13 +10,13 @@ password_reset_jwt_subject = "preset"
 
 def send_email(email_to: str, subject_template="", html_template="", environment={}):
     """Отправка email"""
-    assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
+    assert settings.emails_enabled, "no provided configuration for email variables"
     message = emails.html(
         subject=JinjaTemplate(subject_template),
         html=JinjaTemplate(html_template),
         mail_from=(settings.emails_from_name, settings.emails_from_email),
     )
-    smtp_options = {"host": settings.SMTP_HOST, "port": settings.SMTP_PORT}
+    smtp_options = {"host": settings.smtp_host, "port": settings.smtp_port}
 
     if settings.smtp_ssl:
         smtp_options["ssl"] = True

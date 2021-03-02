@@ -1,25 +1,33 @@
-from typing import Optional
+from src.app.base.service_base import CRUDBase
 
-from tortoise.query_utils import Q
-
-from .models import mat_properties
 from . import schemas
-from ..base.service_base_tortoise import BaseService
+from .models.mat_properties import (
+    CommonHardness,
+    HardnessScales,
+)
 
 
-class HardnessScalesService(BaseService):
-    model = mat_properties.HardnessScales
-    create_schema = schemas.HardnessScales_Create_Pydantic
-    update_schema = schemas.HardnessScales_Create_Pydantic
-    get_schema = schemas.HardnessScales_Get_Pydantic
+# class HardnessScalesService(CRUDBase):
+#     model = HardnessScales
+#     create_schema = schemas.HardnessScalesBase
+#     update_schema = schemas.HardnessScalesBase
+#     get_schema = schemas.HardnessScalesGet
+#
+#
+# class CommonHardnessService(CRUDBase):
+#     model = CommonHardness
+#     create_schema = schemas.CommonHardnessBase
+#     update_schema = schemas.CommonHardnessBase
+#     get_schema = schemas.CommonHardnessGet
 
 
-class CommonHardnessService(BaseService):
-    model = mat_properties.CommonHardness
-    create_schema = schemas.CommonHardness_Create_Pydantic
-    update_schema = schemas.CommonHardness_Create_Pydantic
-    get_schema = schemas.CommonHardness_Get_Pydantic
+class HardnessScalesCRUD(CRUDBase):
+    pass
 
 
-hardness_scales_service = HardnessScalesService()
-common_hardness_service = CommonHardnessService()
+class CommonHardnessCRUD(CRUDBase):
+    pass
+
+
+hardness_scales_service = HardnessScalesCRUD(HardnessScales)
+common_hardness_service = CommonHardnessCRUD(CommonHardness)

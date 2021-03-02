@@ -10,7 +10,7 @@ from alembic import context
 sys.path = ['', '..'] + sys.path[1:]
 
 from src.config.alembic_models import metadata
-from src.config.settings import DATABASE_URI
+from src.config.settings import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -44,14 +44,13 @@ def run_migrations_offline():
     script output.
 
     """
-    url = DATABASE_URI
+    url = settings.database_uri
     # url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        user_module_prefix='sa.'
     )
 
     with context.begin_transaction():
@@ -66,7 +65,7 @@ def run_migrations_online():
 
     """
     configuration = config.get_section(config.config_ini_section)
-    configuration['sqlalchemy.url'] = DATABASE_URI
+    configuration['sqlalchemy.url'] = settings.database_uri
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
@@ -75,7 +74,7 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata, user_module_prefix='sa.'
+            connection=connection, target_metadata=target_metadata
         )
 
         with context.begin_transaction():
