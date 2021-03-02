@@ -1,14 +1,14 @@
 import jwt
 from datetime import datetime, timedelta
 
-from src.config import settings
+from src.config.settings import settings
 
 ALGORITHM = "HS256"
 access_token_jwt_subject = "access"
 
 
 def create_token(user_id: int):
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     return {
         "access_token": create_access_token(
             data={"user_id": user_id}, expires_delta=access_token_expires
@@ -25,5 +25,5 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire, "sub": access_token_jwt_subject})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=ALGORITHM)
     return encoded_jwt

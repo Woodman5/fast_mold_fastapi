@@ -8,7 +8,7 @@ from src.app.user.endpoint import user_alchemy
 api_router = APIRouter()
 
 api_router.include_router(auth_router, prefix='/auth', tags=["Login"])
-api_router.include_router(user_alchemy.router, prefix='/user', tags=["User"])
+api_router.include_router(user_alchemy.router, prefix='/user', tags=["User administration"])
 # api_router.include_router(users.user_router, tags=["User"])
 api_router.include_router(role.role_router, tags=["Person roles"])
 # api_router.include_router(handbook_router, prefix="/handbook", tags=["Handbook"])

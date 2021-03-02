@@ -1,10 +1,8 @@
 from typing import List, Optional, Dict, Type
 
 from fastapi import APIRouter, Response, status, Depends, HTTPException
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
-from src.config.sqlalchemy_conf import get_db
 from src.app.base.service_base import (
     CreateSchemaType,
     UpdateSchemaType,
@@ -19,9 +17,16 @@ def get_customized_router(url: str,
                           create_schema: Type[BaseModel],
                           update_schema: Type[BaseModel] = None,
                           name: str = 'Item',
+                          dependencies=None,
                           ):
 
-    router = APIRouter(prefix=f"{url}")
+    if dependencies is None:
+        dependencies = []
+
+    router = APIRouter(
+        prefix=f"{url}",
+        dependencies=dependencies,
+    )
 
     if not update_schema:
         update_schema = create_schema
@@ -70,4 +75,3 @@ def get_customized_router(url: str,
             raise HTTPException(status_code=400, detail=f'Deletion failed. {e.detail}')
 
     return router
-

@@ -2,11 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Response, status
 
-# from src.app.auth.permissions import get_superuser
-
 from src.app.user import models, schemas_alchemy
 from src.app.user.service import user_role_service
 from src.app.base.router_base import get_customized_router
+from src.app.auth.permissions import get_superuser, get_user
 
 
 role_router = get_customized_router(url='/role',
@@ -14,7 +13,8 @@ role_router = get_customized_router(url='/role',
                                     response_schema=schemas_alchemy.RoleBase,
                                     create_schema=schemas_alchemy.RoleBase,
                                     update_schema=schemas_alchemy.RoleUpdate,
-                                    name='Role'
+                                    name='Role',
+                                    dependencies=[Depends(get_superuser)],
                                     )
 
 # role_router = APIRouter()

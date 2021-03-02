@@ -31,10 +31,21 @@ async def read_users(
     return users
 
 
+# TODO change output scheme
+@router.get("/me")  # , response_model=UserFull)
+def read_user_me(
+    me_user=Depends(get_user),
+):
+    """
+    Get current user.
+    """
+    return me_user
+
+
 @router.get("/{user_id}", response_model=UserFull)
 async def read_user_by_id(
     user_id: int,
-    # current_user: DBUser = Depends(get_user),
+    current_user=Depends(get_superuser),
 ):
     """
     Get a specific user by id.
@@ -52,7 +63,7 @@ async def read_user_by_id(
 @router.post("/")  # , response_model=UserFull)
 async def create_user(
     user_in: UserInDB,
-    # current_user: DBUser = Depends(get_current_active_superuser),
+    current_user=Depends(get_superuser),
 ):
     """
     Create new user.
@@ -96,17 +107,6 @@ async def create_user(
 #         user_in.email = email
 #     user = crud_user.user.update(db, db_obj=current_user, obj_in=user_in)
 #     return user
-
-
-# @router.get("/me", response_model=UserCreate)
-# def read_user_me(
-#     db: Session = Depends(get_db),
-#     current_user: DBUser = Depends(get_user),
-# ):
-#     """
-#     Get current user.
-#     """
-#     return current_user
 
 
 # @router.post("/open", response_model=UserCreate)

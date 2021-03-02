@@ -20,7 +20,7 @@ class User(AbstractBaseModel, SoftDeleteMixin, TimestampMixin):
     class Meta(ormar.ModelMeta):
         tablename = "useraccounts_user"
 
-    user_uuid = ormar.UUID(uuid_format='hex', index=True, unique=True, nullable=False)
+    user_uuid = ormar.UUID(index=True, unique=True, nullable=False)
     username = ormar.String(max_length=30, unique=True, index=True, nullable=False)
     email = ormar.String(max_length=255, unique=True, index=True, nullable=False)
     password = ormar.String(max_length=255, nullable=False)
