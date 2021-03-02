@@ -1,6 +1,6 @@
 import datetime
 import ormar
-from src.app.base.models import AbstractBaseModel, ModelMixin, SoftDeleteMixin, TimestampMixin
+from src.app.base.models_base import AbstractBaseModel, ModelMixin, SoftDeleteMixin, TimestampMixin
 
 
 class Role(AbstractBaseModel, ModelMixin):

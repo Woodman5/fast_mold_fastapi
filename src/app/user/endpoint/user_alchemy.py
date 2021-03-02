@@ -1,16 +1,12 @@
-from typing import List, Union
+from typing import List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from pydantic.networks import EmailStr
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
+
 
 from src.config.settings import settings
 from src.app.auth.send_email import send_new_account_email
-from src.config.sqlalchemy_conf import get_db
 from src.app.auth.permissions import get_superuser, get_user
 
-from src.app.user.models import User, Role
 from src.app.user.schemas_alchemy import UserFull, UserBase, UserInDB
 from src.app.user.service import user_service
 

@@ -10,7 +10,7 @@ from src.app.auth.permissions import get_superuser, get_user
 
 role_router = get_customized_router(url='/role',
                                     service=user_role_service,
-                                    response_schema=schemas_alchemy.RoleBase,
+                                    response_schema=schemas_alchemy.RoleGet,
                                     create_schema=schemas_alchemy.RoleBase,
                                     update_schema=schemas_alchemy.RoleUpdate,
                                     name='Role',
