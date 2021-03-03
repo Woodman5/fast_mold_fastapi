@@ -2,12 +2,13 @@ import datetime
 import uuid
 
 from typing import Optional, List, Sequence
+
+from fastapi import HTTPException, status
 from ormar import Model
 from ormar.exceptions import NoMatch
 
 from src.app.user.models import Role, User
-import src.app.user.schemas_alchemy as schemas
-
+import src.app.user.schemas as schemas
 
 from src.app.auth.security import verify_password, get_password_hash
 from src.app.base.service_base import CRUDBase
@@ -18,7 +19,7 @@ class CRUDUser(CRUDBase):
         try:
             return await self.model.objects.select_related('role').get(**kwargs)
         except NoMatch:
-            return None
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
 
     async def get(self, pk: int) -> Optional[Model]:
         return await self.get_by(id=pk)

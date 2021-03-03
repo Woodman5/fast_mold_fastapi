@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 # from src.config.sqlalchemy_conf import Base
 from ormar import Model, QuerySet
+from ormar.exceptions import NoMatch, MultipleMatches
 
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
@@ -28,26 +29,55 @@ class CRUDBase:
         self.model = model
 
     async def get_item(self, pk: int):
-        return await self.model.objects.get(id=pk)
+        try:
+            item = await self.model.objects.get(id=pk)
+        except NoMatch:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
+        except MultipleMatches:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Found more than one item')
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e)
+
+        if 'item_removed' in self.model.__fields__.keys() and item.item_removed:
+            raise HTTPException(status_code=status.HTTP_410_GONE, detail='Item removed')
+        return item
+
+    @staticmethod
+    def construct_data(item, schema):
+        """
+        Method removes unnecessary attributes from DB data to correspond to provided schema.
+        :param item: Data from DB
+        :param schema: Pydantic schema
+        :return: Pydantic model based on provided scheme without validation
+        """
+        data = item.dict()
+        fields_to_del = set(data.keys()) - set(schema.__fields__.keys())
+        for key in fields_to_del:
+            data.pop(key)
+        return schema.construct(**data)
 
     async def get(self, pk: int, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
         item = await self.get_item(pk=pk)
-        if not item.item_removed:
-            return response_model(**item.dict())
-        else:
-            return HTTPException(status_code=status.HTTP_410_GONE)
-
-    async def get_select(self, pk: int) -> Union[BaseModel, Dict]:
-        return await self.get(pk=pk)
+        data = self.construct_data(item, response_model)
+        return data
 
     async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
-        return await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).all()
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).all()
+        else:
+            return await self.model.objects.offset(skip).limit(limit).all()
 
     async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
-        return await self.model.objects.paginate(page, page_size).exclude(item_removed=True).all()
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.paginate(page, page_size).exclude(item_removed=True).all()
+        else:
+            return await self.model.objects.paginate(page, page_size).all()
 
     async def get_all(self) -> Sequence[Optional[Model]]:
-        return await self.model.objects.exclude(item_removed=True).all()
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.exclude(item_removed=True).all()
+        else:
+            return await self.model.objects.all()
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType) -> Union[
                                                                                             BaseModel, HTTPException]:
@@ -59,11 +89,13 @@ class CRUDBase:
                 item['created'] = datetime.now()
             try:
                 created_model = await self.model.objects.create(**item)
-                return response_model(**created_model.dict())
+                data = self.construct_data(created_model, response_model)
+                return data
             except Exception as e:
                 print(e)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         else:
-            return HTTPException(status_code=status.HTTP_409_CONFLICT)
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Such fields already exists')
 
     async def update(self, pk: int, obj_in: UpdateSchemaType, response_model: ResponseSchemaType) -> BaseModel:
         item = await self.get_item(pk=pk)
@@ -71,7 +103,8 @@ class CRUDBase:
         if 'updated' in self.model.__fields__.keys():
             obj_in['updated'] = datetime.now()
         await item.update(**obj_in)
-        return response_model(**item.dict())
+        data = self.construct_data(item, response_model)
+        return data
 
     async def remove(self, pk: int) -> int:
         if 'item_removed' in self.model.__fields__.keys():

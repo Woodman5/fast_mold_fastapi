@@ -11,7 +11,7 @@ from pydantic import UUID4
 # from src.config.social_app import social_auth, redirect_uri
 from starlette.responses import Response
 
-from src.app.user import service, schemas_alchemy
+from src.app.user import service, schemas
 
 from .schemas import Token, Msg
 from .jwt import create_token
@@ -70,7 +70,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas_alchemy.UserInDB, task: BackgroundTasks):
+async def user_registration(new_user: schemas.UserInDB, task: BackgroundTasks):
     """ Регистрация пользователя
     """
     user = await registration_user(new_user, task)

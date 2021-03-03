@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Response, status
 
-from src.app.user import models, schemas_alchemy
+from src.app.user import models, schemas
 from src.app.user.service import user_role_service
 from src.app.base.router_base import get_customized_router
 from src.app.auth.permissions import get_superuser, get_user
@@ -10,9 +10,9 @@ from src.app.auth.permissions import get_superuser, get_user
 
 role_router = get_customized_router(url='/role',
                                     service=user_role_service,
-                                    response_schema=schemas_alchemy.RoleGet,
-                                    create_schema=schemas_alchemy.RoleBase,
-                                    update_schema=schemas_alchemy.RoleUpdate,
+                                    response_schema=schemas.RoleGet,
+                                    create_schema=schemas.RoleCreate,
+                                    update_schema=schemas.RoleUpdate,
                                     name='Role',
                                     dependencies=[Depends(get_superuser)],
                                     )
@@ -20,20 +20,20 @@ role_router = get_customized_router(url='/role',
 # role_router = APIRouter()
 #
 #
-# @role_router.get("/role/", response_model=List[schemas_alchemy.RoleBase])
+# @role_router.get("/role/", response_model=List[schemas_alchemy.RoleCreate])
 # async def get_items():
 #     items = await models.Role.objects.all()
 #     return items
 #
 #
-# @role_router.get("/role/{item_id}", response_model=schemas_alchemy.RoleBase)
+# @role_router.get("/role/{item_id}", response_model=schemas_alchemy.RoleCreate)
 # async def get_items(item_id: int):
 #     item = await models.Role.objects.get(pk=item_id)
 #     return item
 #
 #
 # @role_router.post("/role/", response_model=schemas_alchemy.Role)
-# async def create_item(role: schemas_alchemy.RoleBase):
+# async def create_item(role: schemas_alchemy.RoleCreate):
 #     # await role.save()
 #     role_item = await models.Role.objects.create(**role.dict())
 #     return role_item

@@ -6,7 +6,7 @@ from typing import Optional
 
 from src.config.settings import settings
 
-from src.app.user import schemas_alchemy, service, models
+from src.app.user import schemas, service, models
 from .models import Verification
 from .send_email import send_new_account_email
 from pydantic import UUID4
@@ -17,7 +17,7 @@ from ormar.exceptions import NoMatch
 password_reset_jwt_subject = "preset"
 
 
-async def registration_user(new_user: schemas_alchemy.UserInDB, task: BackgroundTasks) -> bool:
+async def registration_user(new_user: schemas.UserInDB, task: BackgroundTasks) -> bool:
     """Регистрация пользователя"""
     username_exists = await models.User.objects.filter(username=new_user.username).exists()
     user_email_exists = await models.User.objects.filter(email=new_user.email).exists()
@@ -39,7 +39,7 @@ async def verify_registration_user(uuid: UUID4) -> bool:
     except NoMatch:
         return False
     if verify:
-        await service.user_service.update(obj_in=schemas_alchemy.UserVerifyEmail(is_verified=True), pk=verify.user.id)
+        await service.user_service.update(obj_in=schemas.UserVerifyEmail(is_verified=True), pk=verify.user.id)
         await verify.delete()
         return True
     else:

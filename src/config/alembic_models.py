@@ -4,4 +4,12 @@ from src.app.auth.models import Verification
 from src.app.handbook.models.mat_properties import (
     HardnessScales,
     CommonHardness,
+    Status,
+    Technology,
+    ToolClass,
+    MaterialType,
+    ImitationMaterial,
+    ChemicalResistance,
+    MeasuringStandards,
+    Colors,
 )

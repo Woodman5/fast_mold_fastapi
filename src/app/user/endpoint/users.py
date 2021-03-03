@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Body, Form
 from src.app.auth.permissions import get_user
 
 from src.app.user.models import User
-from src.app.user.schemas_alchemy import UserFull, UserInDB
+from src.app.user.schemas import UserFull, UserInDB
 from src.app.user.service import user_service
 from src.app.base.router_base import get_customized_router
 

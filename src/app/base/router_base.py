@@ -50,10 +50,7 @@ def get_customized_router(url: str,
     @router.get('/{pk}', summary=f'{name}, get single item by Id')
     async def get_single(pk: int):
         """ Get single item """
-        try:
-            return await service.get(pk=pk, response_model=response_schema)
-        except Exception:
-            return Response(status_code=status.HTTP_404_NOT_FOUND)
+        return await service.get(pk=pk, response_model=response_schema)
 
     @router.post('/', summary=f'{name}, post item')
     async def create(item: create_schema):
@@ -68,10 +65,10 @@ def get_customized_router(url: str,
     @router.delete('/{pk}', status_code=204, summary=f'{name}, delete item')
     async def delete(pk: int):
         """ Delete Item """
-        try:
-            await service.remove(pk=pk)
-            return Response(status_code=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f'Deletion failed. {e.detail}')
+        # try:
+        await service.remove(pk=pk)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+        # except Exception as e:
+        #     raise HTTPException(status_code=400, detail=f'Deletion failed. {e}')
 
     return router

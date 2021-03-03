@@ -1,30 +1,35 @@
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
+import uuid
 
-from fastapi import Body, Form
-from pydantic import BaseModel, EmailStr, UUID4
-from pydantic.fields import ModelField, Field
-from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
-from .models import User, Role
-
-
-Person_Create_Pydantic = pydantic_model_creator(Role,
-                                                name='Create role',
-                                                exclude_readonly=True,
-                                                exclude=('usermodels',)
-                                                )
-
-Person_Get_Pydantic = pydantic_model_creator(Role,
-                                             name='Get role',
-                                             exclude=('usermodels',)
-                                             )
+from pydantic import BaseModel, UUID4, AnyUrl
+from sqlalchemy_utils import PhoneNumberType
+# from src.app.base.schemas_base import Schema
 
 
-class Role(PydanticModel):
-    id: Optional[int]
-    person_type: Optional[str]
-    person_slug: Optional[str]
-    person_desc: Optional[str]
+class UserBase(BaseModel):
+    username: str
+    email: str
+    first_name: str
+    phone: str
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class UserDefaults(UserBase):
+    user_uuid: UUID4 = uuid.uuid4()
+    is_active: bool = True
+    is_staff: bool = False
+    is_superuser: bool = False
+    is_legal_person: bool = False
+    is_verified: bool = False
+    item_removed: bool = False
+
+
+class UserInDB(UserBase):
+    password: str
+    user_uuid: Optional[UUID4]
 
 
 class UserLastLoginUpdate(BaseModel):
@@ -37,95 +42,83 @@ class UserVerifyEmail(BaseModel):
     is_verified: bool
 
 
-class UserPydanticBase(PydanticModel):
-    """ Properties to receive via API by user """
-
-    user_uuid: Optional[UUID4]
-    username: Optional[str]
-    email: Optional[EmailStr]
-    avatar: Optional[str]
-    is_verified: Optional[bool]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    middle_name: Optional[str]
-    phone: Optional[str]
-    address: Optional[str]
-    date_joined: Optional[datetime]
-    role: Optional[Role]
+class RoleUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str] = None
 
 
-class UserPydantic(UserPydanticBase):
-    """ Additional properties to receive via API by admin """
+class RoleCreate(RoleUpdate):
+    name: str
+    slug: str
 
+
+class RoleGet(RoleUpdate):
     id: Optional[int]
-    is_active: Optional[bool]
-    is_superuser: Optional[bool]
-    is_staff: Optional[bool]
-    is_legal_person: Optional[bool]
-    last_login: Optional[datetime]
+
+    class Config:
+        orm_mode = True
 
 
-class UserUpdate(PydanticModel):
-    """ Properties to receive via API on update """
+class Role(RoleGet):
+    updated: Optional[datetime] = None
+    created: Optional[datetime]
+    item_removed: Optional[bool]
 
-    username: Optional[str]
-    email: Optional[EmailStr]
 
-    avatar: Optional[str]
-
-    first_name: Optional[str]
+class UserFull(UserDefaults):
+    id: int
     last_name: Optional[str]
     middle_name: Optional[str]
-
-    phone: Optional[str]
     address: Optional[str]
+    avatar: Optional[AnyUrl]
+    updated: Optional[datetime] = None
+    created: datetime
+    last_login: Optional[datetime] = None
+    role: Role
+    # role_id: int
 
-    is_active: Optional[bool]
-    is_superuser: Optional[bool]
-    is_staff: Optional[bool]
-    is_legal_person: Optional[bool]
-
-    role_id: Optional[int]
-
-
-# Используется при создании пользователя при самостоятельной регистрации
-User_Create_Pydantic = pydantic_model_creator(User,
-                                              name='create_user',
-                                              exclude_readonly=True,
-                                              exclude=('user_uuid',
-                                                       'is_active',
-                                                       'is_superuser',
-                                                       'is_verified',
-                                                       'is_staff',
-                                                       'is_legal_person',
-                                                       'last_login',
-                                                       'date_joined',
-                                                       'role_id',
-                                                       ),
-                                              )
-
-# Используется при создании пользователя администратором
-User_Admin_Create_Pydantic = pydantic_model_creator(User,
-                                                    name='create_user_by_admin',
-                                                    exclude_readonly=True,
-                                                    exclude=('user_uuid',
-                                                             'last_login',
-                                                             'date_joined',
-                                                             ),
-                                                    )
-
-# Используется при запросе всех данных пользователя из базы
-User_Pydantic = pydantic_model_creator(User,
-                                       name='user',
-                                       )
+    class Config:
+        orm_mode = True
 
 
-# Изменение типа поля после использования генератора "pydantic_model_creator"
-class UserRegistrationByAdminPydantic(User_Admin_Create_Pydantic):
-    """ Properties to validate user data for registration by admin """
-    email: EmailStr = Field(...)
+# class RoleFreddie(Schema):
+#     id: int
+#     person_type: str
+#     person_slug: str
+#     person_desc: Optional[str] = None
+#
+#     class Config:
+#         default_readable_fields = {'person_type'}
+#         orm_mode = True
+#
+#
+# class RoleFreddieWrite(RoleFreddie):
+#     id: int = None
+#
+#
+# class UserFreddie(Schema):
+#     id: int
+#
+#     username: str
+#     email: str
+#     password: str
+#
+#     first_name: str
+#     last_name: str
+#     middle_name: Optional[str]
+#     phone: str
+#     address: Optional[str]
+#     is_active: bool
+#     is_staff: bool
+#     is_superuser: bool
+#     is_legal_person: bool
+#
+#     last_login: Optional[datetime] = None
+#     date_joined: datetime
+#     role: RoleFreddie
+#
+#     class Config:
+#         default_readable_fields = {'email', 'username'}
+#         orm_mode = True
 
-
-# print(Person_Get_Pydantic.schema_json(indent=4))
-# print(Person_Create_Pydantic.schema_json(indent=4))
-# print(User_Pydantic.schema_json(indent=4))
