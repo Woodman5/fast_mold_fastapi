@@ -12,4 +12,5 @@ from src.app.handbook.models.mat_properties import (
     ChemicalResistance,
     MeasuringStandards,
     Colors,
+    TypeTechnology,
 )

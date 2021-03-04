@@ -17,6 +17,7 @@ from .models.mat_properties import (
     ChemicalResistance,
     MeasuringStandards,
     Colors,
+    TypeTechnology,
 )
 
 
@@ -57,12 +58,11 @@ class MeasuringStandardsCRUD(CRUDBase):
 
 
 class ColorsCRUD(CRUDBase):
-    async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType) -> Union[
-                                                                                            BaseModel, HTTPException]:
-        if obj_in.color_type.lower() not in common_data.color_type_list:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Color type not allowed')
-        obj_in.color_type = obj_in.color_type.lower()
-        return await super(ColorsCRUD, self).create(obj_in=obj_in, response_model=response_model)
+    pass
+
+
+class TypeTechnologyCRUD(CRUDBase):
+    pass
 
 
 hardness_scales_service = HardnessScalesCRUD(HardnessScales)
@@ -75,3 +75,4 @@ imitationmaterial_service = ImitationMaterialCRUD(ImitationMaterial)
 chemicalresistance_service = ChemicalResistanceCRUD(ChemicalResistance)
 measuringstandards_service = MeasuringStandardsCRUD(MeasuringStandards)
 colors_service = ColorsCRUD(Colors)
+typetechnology_service = TypeTechnologyCRUD(TypeTechnology)

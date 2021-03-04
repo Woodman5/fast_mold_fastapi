@@ -93,7 +93,14 @@ class Colors(AbstractBaseModel, NameMixin, DescriptionMixin):
         tablename = "handbook_colors"
 
 
+class TypeTechnology(AbstractBaseModel, NameMixin, DescriptionMixin):
+    """ TypeTechnology Model """
 
+    class Meta(ormar.ModelMeta):
+        tablename = "handbook_typetechnology"
+
+    short_desc = ormar.String(max_length=400)
+    technology = ormar.ForeignKey(Technology)
 
 
 
