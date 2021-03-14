@@ -84,6 +84,14 @@ colors_router = get_customized_router(url='/colors',
                                       name='Color'
                                       )
 
+typetechnology_router = get_customized_router(url='/typetechnologies',
+                                              service=service.typetechnology_service,
+                                              response_schema=schemas.TypeTechnologyGet,
+                                              create_schema=schemas.TypeTechnologyCreate,
+                                              update_schema=schemas.TypeTechnologyUpdate,
+                                              name='Technology types'
+                                              )
+
 
 handbook_router.include_router(hs_router, tags=['Hardness Scales'])
 handbook_router.include_router(ch_router, tags=['Common Hardness'])  # , dependencies=[Depends(get_user)])
@@ -95,3 +103,4 @@ handbook_router.include_router(technology_router, tags=['Technologies'])  # , de
 handbook_router.include_router(chemicalresistance_router, tags=['Chemical Resistances'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(measuringstandards_router, tags=['Measuring Standards'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(colors_router, tags=['Colors'])  # , dependencies=[Depends(get_user)])
+handbook_router.include_router(typetechnology_router, tags=['Technology types'])  # , dependencies=[Depends(get_user)])

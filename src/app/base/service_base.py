@@ -116,3 +116,29 @@ class CRUDBase:
         else:
             await self.model.objects.delete(id=pk)
         return 1
+
+
+class CRUDRelations(CRUDBase):
+
+    def __init__(self, model: Type[Model], rel: str):
+        super().__init__(model)
+        self.rel = rel
+
+    async def get_item(self, pk: int):
+        try:
+            item = await self.model.objects.select_related(self.rel).get(id=pk)
+        except NoMatch:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
+        except MultipleMatches:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Found more than one item')
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e)
+
+        if 'item_removed' in self.model.__fields__.keys() and item.item_removed:
+            raise HTTPException(status_code=status.HTTP_410_GONE, detail='Item removed')
+        return item
+
+    # async def get(self, pk: int, rel: str, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
+    #     item = await self.get_item(pk=pk, rel=rel)
+    #     data = self.construct_data(item, response_model)
+    #     return data

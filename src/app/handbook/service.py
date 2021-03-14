@@ -3,7 +3,7 @@ from typing import Union
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 
-from src.app.base.service_base import CRUDBase, ResponseSchemaType, CreateSchemaType, UpdateSchemaType
+from src.app.base.service_base import CRUDBase, ResponseSchemaType, CreateSchemaType, UpdateSchemaType, CRUDRelations
 
 from .models import common_data
 from .models.mat_properties import (
@@ -61,7 +61,7 @@ class ColorsCRUD(CRUDBase):
     pass
 
 
-class TypeTechnologyCRUD(CRUDBase):
+class TypeTechnologyCRUD(CRUDRelations):
     pass
 
 
@@ -75,4 +75,4 @@ imitationmaterial_service = ImitationMaterialCRUD(ImitationMaterial)
 chemicalresistance_service = ChemicalResistanceCRUD(ChemicalResistance)
 measuringstandards_service = MeasuringStandardsCRUD(MeasuringStandards)
 colors_service = ColorsCRUD(Colors)
-typetechnology_service = TypeTechnologyCRUD(TypeTechnology)
+typetechnology_service = TypeTechnologyCRUD(TypeTechnology, rel='technology')

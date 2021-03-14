@@ -13,6 +13,10 @@ def check_value_in_list(value, value_list):
     return False
 
 
+class ForeignGet(BaseModel):
+    id: int
+
+
 class HardnessScalesUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
@@ -225,4 +229,26 @@ class ColorsCreate(ColorsUpdate):
 
 
 class ColorsGet(ColorsUpdate):
+    id: int
+
+
+class TypeTechnologyUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str] = None
+    short_desc: Optional[str]
+    technology: Optional[TechnologyGet]
+
+    class Config:
+        orm_mode = True
+
+
+class TypeTechnologyCreate(TypeTechnologyUpdate):
+    name: str
+    slug: str
+    short_desc: str
+    technology: ForeignGet
+
+
+class TypeTechnologyGet(TypeTechnologyUpdate):
     id: int
