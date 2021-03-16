@@ -107,6 +107,8 @@ class CRUDBase:
         return data
 
     async def remove(self, pk: int) -> int:
+        if not await self.model.objects.filter(pk=pk).exists():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
         if 'item_removed' in self.model.__fields__.keys():
             item = await self.get_item(pk=pk)
             time_for_name = int(datetime.now().timestamp())
@@ -138,7 +140,20 @@ class CRUDRelations(CRUDBase):
             raise HTTPException(status_code=status.HTTP_410_GONE, detail='Item removed')
         return item
 
-    # async def get(self, pk: int, rel: str, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
-    #     item = await self.get_item(pk=pk, rel=rel)
-    #     data = self.construct_data(item, response_model)
-    #     return data
+    async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).select_related(self.rel).all()
+        else:
+            return await self.model.objects.offset(skip).limit(limit).select_related(self.rel).all()
+
+    async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.paginate(page, page_size).exclude(item_removed=True).select_related(self.rel).all()
+        else:
+            return await self.model.objects.paginate(page, page_size).select_related(self.rel).all()
+
+    async def get_all(self) -> Sequence[Optional[Model]]:
+        if 'item_removed' in self.model.__fields__.keys():
+            return await self.model.objects.exclude(item_removed=True).select_related(self.rel).all()
+        else:
+            return await self.model.objects.select_related(self.rel).all()

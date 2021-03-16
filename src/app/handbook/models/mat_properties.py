@@ -103,6 +103,16 @@ class TypeTechnology(AbstractBaseModel, NameMixin, DescriptionMixin):
     technology = ormar.ForeignKey(Technology)
 
 
+class ToolType(AbstractBaseModel, NameMixin, DescriptionMixin):
+    """ ToolType Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "handbook_tooltype"
+
+    short_desc = ormar.String(max_length=400)
+    tool_class = ormar.ForeignKey(ToolClass)
+
+
 
 
 
