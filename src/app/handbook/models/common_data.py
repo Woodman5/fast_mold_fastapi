@@ -1,3 +1,5 @@
+import pycountry
+
 standard_type_list = [
         'iso',
         'gost',
@@ -24,5 +26,5 @@ color_type_list = [
         'ral',
     ]
 
-
+countries = [x.alpha_2 for x in pycountry.countries]
 

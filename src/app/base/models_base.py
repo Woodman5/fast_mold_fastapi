@@ -17,6 +17,14 @@ class SoftDeleteMixin:
     item_removed = ormar.Boolean(default=False)
 
 
+class UrlMixin:
+    url: str = ormar.Text(index=True, nullable=True)
+
+
+class ShortDescriptionMixin:
+    short_desc = ormar.String(max_length=400)
+
+
 class TimestampMixin:
     created: datetime.datetime = ormar.DateTime(nullable=False)
     updated: datetime.datetime = ormar.DateTime(nullable=True)

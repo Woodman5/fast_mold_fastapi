@@ -7,6 +7,8 @@ from src.app.base.models_base import (
     TimestampMixin,
     NameMixin,
     DescriptionMixin,
+    ShortDescriptionMixin,
+    UrlMixin,
 )
 
 from . import common_data
@@ -16,7 +18,7 @@ class HardnessScales(AbstractBaseModel, NameMixin, DescriptionMixin):
     """ Hardness Scales Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_hardnessscales"
+        tablename = "hb_hd"
 
     hs_min = ormar.Integer(default=0)
     hs_max = ormar.Integer(default=100)
@@ -27,49 +29,49 @@ class CommonHardness(AbstractBaseModel, NameMixin, DescriptionMixin):
     """ Human readable hardness Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_commonhardness"
+        tablename = "hb_comhd"
 
 
 class Status(AbstractBaseModel, NameMixin, DescriptionMixin):
     """ Statuses list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_statuses"
+        tablename = "hb_status"
 
 
-class Technology(AbstractBaseModel, NameMixin):
+class Tech(AbstractBaseModel, NameMixin):
     """ Technologies list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_technologies"
+        tablename = "hb_tech"
 
 
 class ToolClass(AbstractBaseModel, NameMixin, DescriptionMixin):
     """ ToolClasses list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_toolclasses"
+        tablename = "hb_toolclasses"
 
 
 class MaterialType(AbstractBaseModel, NameMixin):
     """ MaterialTypes list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_materialtypes"
+        tablename = "hb_mattypes"
 
 
 class ImitationMaterial(AbstractBaseModel, NameMixin):
     """ ImitationMaterials list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_imitationmaterial"
+        tablename = "hb_imitmat"
 
 
 class ChemicalResistance(AbstractBaseModel, NameMixin):
     """ ChemicalResistances list Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_chemicalresistance"
+        tablename = "hb_chemres"
 
 
 class MeasuringStandards(AbstractBaseModel, NameMixin, DescriptionMixin):
@@ -79,7 +81,7 @@ class MeasuringStandards(AbstractBaseModel, NameMixin, DescriptionMixin):
     application_type = ormar.String(max_length=30, choices=common_data.application_type_list)
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_measuringstandards"
+        tablename = "hb_measuring"
 
 
 class Colors(AbstractBaseModel, NameMixin, DescriptionMixin):
@@ -90,29 +92,35 @@ class Colors(AbstractBaseModel, NameMixin, DescriptionMixin):
     rgb_code = ormar.String(max_length=30)
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_colors"
+        tablename = "hb_colors"
 
 
-class TypeTechnology(AbstractBaseModel, NameMixin, DescriptionMixin):
-    """ TypeTechnology Model """
+class TypeTech(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMixin):
+    """ TypeTech Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_typetechnology"
+        tablename = "hb_typetech"
 
-    short_desc = ormar.String(max_length=400)
-    technology = ormar.ForeignKey(Technology)
+    technology = ormar.ForeignKey(Tech)
 
 
-class ToolType(AbstractBaseModel, NameMixin, DescriptionMixin):
+class ToolType(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMixin):
     """ ToolType Model """
 
     class Meta(ormar.ModelMeta):
-        tablename = "handbook_tooltype"
+        tablename = "hb_tooltype"
 
-    short_desc = ormar.String(max_length=400)
     tool_class = ormar.ForeignKey(ToolClass)
 
 
+class ToolMan(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMixin, UrlMixin):
+    """ ToolMan Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_toolman"
+
+    country = ormar.String(max_length=200)
+    technology = ormar.ManyToMany(Tech, related_name='tm')
 
 
 

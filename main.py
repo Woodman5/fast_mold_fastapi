@@ -88,5 +88,4 @@ async def read_root(request: Request):
 
 
 if __name__ == "__main__":
-    print(settings.dict())
     uvicorn.run("main:app", host=settings.server_host, port=settings.server_port, reload=True)

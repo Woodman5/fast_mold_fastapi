@@ -33,7 +33,7 @@ technology_router = get_customized_router(url='/technology',
                                           response_schema=schemas.TechnologyGet,
                                           create_schema=schemas.TechnologyCreate,
                                           update_schema=schemas.TechnologyUpdate,
-                                          name='Technology'
+                                          name='Tech'
                                           )
 
 toolclass_router = get_customized_router(url='/toolclass',
@@ -89,8 +89,24 @@ typetechnology_router = get_customized_router(url='/typetechnologies',
                                               response_schema=schemas.TypeTechnologyGet,
                                               create_schema=schemas.TypeTechnologyCreate,
                                               update_schema=schemas.TypeTechnologyUpdate,
-                                              name='Technology types'
+                                              name='Tech types'
                                               )
+
+tooltype_router = get_customized_router(url='/tooltypes',
+                                        service=service.tooltype_service,
+                                        response_schema=schemas.ToolTypeGet,
+                                        create_schema=schemas.ToolTypeCreate,
+                                        update_schema=schemas.ToolTypeUpdate,
+                                        name='Tool types'
+                                        )
+
+toolmanufacturer_router = get_customized_router(url='/toolmanufacturers',
+                                                service=service.toolmanufacturer_service,
+                                                response_schema=schemas.ToolManufacturerGet,
+                                                create_schema=schemas.ToolManufacturerCreate,
+                                                update_schema=schemas.ToolManufacturerUpdate,
+                                                name='Tool Manufacturers'
+                                                )
 
 
 handbook_router.include_router(hs_router, tags=['Hardness Scales'])
@@ -103,4 +119,6 @@ handbook_router.include_router(technology_router, tags=['Technologies'])  # , de
 handbook_router.include_router(chemicalresistance_router, tags=['Chemical Resistances'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(measuringstandards_router, tags=['Measuring Standards'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(colors_router, tags=['Colors'])  # , dependencies=[Depends(get_user)])
-handbook_router.include_router(typetechnology_router, tags=['Technology types'])  # , dependencies=[Depends(get_user)])
+handbook_router.include_router(typetechnology_router, tags=['Tech types'])  # , dependencies=[Depends(get_user)])
+handbook_router.include_router(tooltype_router, tags=['Tool types'])  # , dependencies=[Depends(get_user)])
+handbook_router.include_router(toolmanufacturer_router, tags=['Tool Manufactures'])  # , dependencies=[Depends(get_user)])

@@ -10,14 +10,16 @@ from .models.mat_properties import (
     HardnessScales,
     CommonHardness,
     Status,
-    Technology,
+    Tech,
     ToolClass,
     MaterialType,
     ImitationMaterial,
     ChemicalResistance,
     MeasuringStandards,
     Colors,
-    TypeTechnology,
+    TypeTech,
+    ToolType,
+    ToolMan,
 )
 
 
@@ -65,14 +67,23 @@ class TypeTechnologyCRUD(CRUDRelations):
     pass
 
 
+class ToolTypeCRUD(CRUDRelations):
+    pass
+
+
+class ToolManufacturerCRUD(CRUDRelations):
+    pass
+
 hardness_scales_service = HardnessScalesCRUD(HardnessScales)
 common_hardness_service = CommonHardnessCRUD(CommonHardness)
 status_service = StatusCRUD(Status)
-technology_service = TechnologyCRUD(Technology)
+technology_service = TechnologyCRUD(Tech)
 toolclass_service = ToolClassCRUD(ToolClass)
 materialtype_service = MaterialTypeCRUD(MaterialType)
 imitationmaterial_service = ImitationMaterialCRUD(ImitationMaterial)
 chemicalresistance_service = ChemicalResistanceCRUD(ChemicalResistance)
 measuringstandards_service = MeasuringStandardsCRUD(MeasuringStandards)
 colors_service = ColorsCRUD(Colors)
-typetechnology_service = TypeTechnologyCRUD(TypeTechnology, rel='technology')
+typetechnology_service = TypeTechnologyCRUD(TypeTech, rel='technology')
+tooltype_service = ToolTypeCRUD(ToolType, rel='tooltype')
+toolmanufacturer_service = ToolManufacturerCRUD(ToolMan, rel='toolmanufacturer')

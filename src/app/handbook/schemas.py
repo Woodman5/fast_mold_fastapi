@@ -252,3 +252,52 @@ class TypeTechnologyCreate(TypeTechnologyUpdate):
 
 class TypeTechnologyGet(TypeTechnologyUpdate):
     id: int
+
+
+class ToolTypeUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str] = None
+    short_desc: Optional[str]
+    technology: Optional[TechnologyGet]
+
+    class Config:
+        orm_mode = True
+
+
+class ToolTypeCreate(ToolTypeUpdate):
+    name: str
+    slug: str
+    short_desc: str
+    technology: ForeignGet
+
+
+class ToolTypeGet(ToolTypeUpdate):
+    id: int
+
+
+class ToolManufacturerUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    description: Optional[str] = None
+    short_desc: Optional[str]
+    country: Optional[str]
+    technology: Optional[TechnologyGet]
+
+    class Config:
+        orm_mode = True
+
+
+class ToolManufacturerCreate(ToolManufacturerUpdate):
+    name: str
+    slug: str
+    short_desc: str
+    country: str
+    # technology: ForeignGet
+
+
+class ToolManufacturerGet(ToolManufacturerUpdate):
+    id: int
+
+
+
