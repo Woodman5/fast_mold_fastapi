@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from fastapi import Body, Form
@@ -282,7 +282,8 @@ class ToolManufacturerUpdate(BaseModel):
     description: Optional[str] = None
     short_desc: Optional[str]
     country: Optional[str]
-    technology: Optional[TechnologyGet]
+    url: Optional[str]
+    technology: Optional[List[int]]
 
     class Config:
         orm_mode = True
@@ -293,11 +294,11 @@ class ToolManufacturerCreate(ToolManufacturerUpdate):
     slug: str
     short_desc: str
     country: str
-    # technology: ForeignGet
+    technology: List[int]
 
 
 class ToolManufacturerGet(ToolManufacturerUpdate):
     id: int
-
+    # technology: List[int]
 
 

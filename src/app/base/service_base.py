@@ -1,5 +1,6 @@
 from typing import List, Optional, Generic, TypeVar, Type, Sequence, Union, Dict
-from datetime import datetime
+from datetime import datetime, timezone
+import pytz
 
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status
@@ -15,6 +16,14 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 GetSchemaType = TypeVar("GetSchemaType", bound=BaseModel)
 QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
 ResponseSchemaType = Type[BaseModel]
+
+
+async def check_name_slug(model: Type[Model], name: str, slug: str) -> bool:
+    name_exists = await model.objects.filter(name=name).exists()
+    slug_exists = await model.objects.filter(slug=slug).exists()
+    if name_exists or slug_exists:
+        return True
+    return False
 
 
 class CRUDBase:
@@ -81,12 +90,10 @@ class CRUDBase:
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType) -> Union[
                                                                                             BaseModel, HTTPException]:
-        name_exists = await self.model.objects.filter(name=obj_in.name).exists()
-        slug_exists = await self.model.objects.filter(slug=obj_in.slug).exists()
-        if not name_exists and not slug_exists:
+        if not await check_name_slug(self.model, obj_in.name, obj_in.slug):
             item = obj_in.dict()
             if 'created' in self.model.__fields__.keys():
-                item['created'] = datetime.now()
+                item['created'] = datetime.now(timezone.utc)
             try:
                 created_model = await self.model.objects.create(**item)
                 data = self.construct_data(created_model, response_model)
@@ -122,9 +129,12 @@ class CRUDBase:
 
 class CRUDRelations(CRUDBase):
 
-    def __init__(self, model: Type[Model], rel: str):
+    def __init__(self, model: Type[Model], rel: List[str], exclude: Union[List[str], None] = None):
         super().__init__(model)
+        if exclude is None:
+            exclude = []
         self.rel = rel
+        self.exclude = exclude
 
     async def get_item(self, pk: int):
         try:

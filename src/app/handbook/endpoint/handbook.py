@@ -4,6 +4,7 @@ from src.app.auth.permissions import get_superuser, get_user
 
 from src.app.handbook import schemas
 from src.app.handbook import service
+from src.app.handbook.models import mat_properties
 from src.app.base.router_base import get_customized_router
 
 handbook_router = APIRouter()
@@ -104,6 +105,7 @@ toolmanufacturer_router = get_customized_router(url='/toolmanufacturers',
                                                 service=service.toolmanufacturer_service,
                                                 response_schema=schemas.ToolManufacturerGet,
                                                 create_schema=schemas.ToolManufacturerCreate,
+                                                # create_schema=mat_properties.ToolMan,
                                                 update_schema=schemas.ToolManufacturerUpdate,
                                                 name='Tool Manufacturers'
                                                 )

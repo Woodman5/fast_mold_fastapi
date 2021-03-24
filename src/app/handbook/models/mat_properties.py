@@ -114,13 +114,13 @@ class ToolType(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionM
 
 
 class ToolMan(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMixin, UrlMixin):
-    """ ToolMan Model """
+    """ Tool Manufacturer Model """
 
     class Meta(ormar.ModelMeta):
         tablename = "hb_toolman"
 
-    country = ormar.String(max_length=200)
-    technology = ormar.ManyToMany(Tech, related_name='tm')
+    country = ormar.String(max_length=800)
+    technology = ormar.ManyToMany(Tech)
 
 
 
