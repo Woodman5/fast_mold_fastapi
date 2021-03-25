@@ -28,3 +28,8 @@ color_type_list = [
 
 countries = [x.alpha_2 for x in pycountry.countries]
 
+flammability_list = [
+    'Горючий',
+    'Не поддерживающий горение',
+    'Самозатухающий',
+]

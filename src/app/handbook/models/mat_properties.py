@@ -123,8 +123,142 @@ class ToolMan(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMi
     technology = ormar.ManyToMany(Tech)
 
 
+#  --------------------------------------------------
+class ThermalChars(AbstractBaseModel):
+    """ Thermal Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_therm"
+
+    thermal_expansion = ormar.Decimal(minimum=0.0, max_digits=12, precision=8, nullable=True)
+    temp_oper_min = ormar.Integer(minimum=-274, nullable=True)
+    temp_deform = ormar.Integer(minimum=-274, nullable=True)
+
+    thermal_expansion_st = ormar.ForeignKey(MeasuringStandards, related_name='the_st', nullable=True)
+    temp_deform_st = ormar.ForeignKey(MeasuringStandards, related_name='temdef_st', nullable=True)
 
 
+class ShockLoad(AbstractBaseModel):
+    """ Shock Load Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_shload"
+
+    izod_notched = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    izod_unnotched = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    sharpy = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+
+    izod_notched_st = ormar.ForeignKey(MeasuringStandards, related_name='in_st', nullable=True)
+    izod_unnotched_st = ormar.ForeignKey(MeasuringStandards, related_name='iun_st', nullable=True)
+    sharpy_st = ormar.ForeignKey(MeasuringStandards, related_name='sh_st', nullable=True)
+
+
+#  todo chemical_resistance = models.ManyToManyField(ChemicalResistance) перенести в Material
+class MechanicalChars(AbstractBaseModel):
+    """ Mechanical Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_mechchars"
+
+    tensile_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    flexural_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    compressive_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_strength_lengthwise = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_strength_crosswise = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    elastic_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    tensile_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    flexural_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    compressive_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_modulus_lengthwise = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_modulus_crosswise = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    elongation_at_break = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    interlaminar_shear_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    shear_strain = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    single_shear_bearing = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    openhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    openhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    filledhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    filledhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    filledhole_compression_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    filledhole_compression_modulus = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    tool_side_peel = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    water_absorption = ormar.Decimal(minimum=0.0, max_digits=5, precision=2, nullable=True)
+    shrinkage = ormar.Decimal(minimum=0.0, max_digits=5, precision=2, nullable=True)
+
+    shrinkage_desc = ormar.String(max_length=400, nullable=True)
+
+    tensile_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='ts_st', nullable=True)
+    flexural_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='fs_st', nullable=True)
+    compressive_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='cs_st', nullable=True)
+    shear_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='ss_st', nullable=True)
+    shear_strength_lengthwise_st = ormar.ForeignKey(MeasuringStandards, related_name='ssl_st', nullable=True)
+    shear_strength_crosswise_st = ormar.ForeignKey(MeasuringStandards, related_name='ssc_st', nullable=True)
+    elastic_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='el_st', nullable=True)
+    tensile_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='tm_st', nullable=True)
+    flexural_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='fm_st', nullable=True)
+    compressive_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='cm_st', nullable=True)
+    shear_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='sm_st', nullable=True)
+    shear_modulus_lengthwise_st = ormar.ForeignKey(MeasuringStandards, related_name='sml_st', nullable=True)
+    shear_modulus_crosswise_st = ormar.ForeignKey(MeasuringStandards, related_name='smc_st', nullable=True)
+    elongation_at_break_st = ormar.ForeignKey(MeasuringStandards, related_name='eb_st', nullable=True)
+    interlaminar_shear_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='ilss_st', nullable=True)
+    shear_strain_st = ormar.ForeignKey(MeasuringStandards, related_name='sst_st', nullable=True)
+    single_shear_bearing_st = ormar.ForeignKey(MeasuringStandards, related_name='ssb_st', nullable=True)
+    openhole_tension_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='oht_st', nullable=True)
+    openhole_tension_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='ohtm_st', nullable=True)
+    filledhole_tension_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='fht_st', nullable=True)
+    filledhole_tension_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='fhtm_st', nullable=True)
+    filledhole_compression_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='fhc_st', nullable=True)
+    filledhole_compression_modulus_st = ormar.ForeignKey(MeasuringStandards, related_name='fhcm_st', nullable=True)
+    water_absorption_st = ormar.ForeignKey(MeasuringStandards, related_name='wa_st', nullable=True)
+    shrinkage_st = ormar.ForeignKey(MeasuringStandards, related_name='shr_st', nullable=True)
+
+
+class ElectroProp(AbstractBaseModel):
+    """ Electrical Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_elecprop"
+
+    dielectric_const = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+    volume_resistivity = ormar.Decimal(minimum=0.0, max_digits=20, precision=18, nullable=True)
+    dissipation_factor = ormar.Decimal(minimum=0.0, max_digits=8, precision=5, nullable=True)
+    dielectric_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=5, nullable=True)
+
+    dielectric_const_st = ormar.ForeignKey(MeasuringStandards, related_name='dc_st', nullable=True)
+    volume_resistivity_st = ormar.ForeignKey(MeasuringStandards, related_name='vr_st', nullable=True)
+    dissipation_factor_st = ormar.ForeignKey(MeasuringStandards, related_name='df_st', nullable=True)
+    dielectric_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='ds_st', nullable=True)
+
+
+class BurnTesting(AbstractBaseModel):
+    """ Burn Testing Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_burnt"
+
+    hor_burn_15 = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    hor_burn_60 = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    ver_burn_12 = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    ignition45 = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    heat_release = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    nbs_flamm = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    nbs_non_flamm = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+
+    flammability = ormar.String(max_length=100, choices=common_data.flammability_list, nullable=True)
+
+    additional_props = ormar.Text(nullable=True)
+
+    flammability_st = ormar.ForeignKey(MeasuringStandards, related_name='flam', nullable=True)
+    hor_burn_15_st = ormar.ForeignKey(MeasuringStandards, related_name='hb15_st', nullable=True)
+    hor_burn_60_st = ormar.ForeignKey(MeasuringStandards, related_name='hb60_st', nullable=True)
+    ver_burn_12_st = ormar.ForeignKey(MeasuringStandards, related_name='vb12_st', nullable=True)
+    ignition45_st = ormar.ForeignKey(MeasuringStandards, related_name='i45_st', nullable=True)
+    heat_release_st = ormar.ForeignKey(MeasuringStandards, related_name='hr_st', nullable=True)
+    nbs_flamm_st = ormar.ForeignKey(MeasuringStandards, related_name='nbsf_st', nullable=True)
+    nbs_non_flamm_st = ormar.ForeignKey(MeasuringStandards, related_name='nbsn_st', nullable=True)
 
 
 
