@@ -299,6 +299,6 @@ class ToolManufacturerCreate(ToolManufacturerUpdate):
 
 class ToolManufacturerGet(ToolManufacturerUpdate):
     id: int
-    # technology: List[int]
+    technology: List[TechnologyGet]
 
 

@@ -11,6 +11,7 @@ from src.app.base.service_base import (
     CreateSchemaType,
     UpdateSchemaType,
     CRUDRelations,
+    CRUDRelationsM2M,
     check_name_slug)
 
 from .models import common_data
@@ -79,31 +80,26 @@ class ToolTypeCRUD(CRUDRelations):
     pass
 
 
-class ToolManufacturerCRUD(CRUDRelations):
+class ToolManufacturerCRUD(CRUDRelationsM2M):
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType) -> Union[
         BaseModel, HTTPException]:
+        created_model, relation_items = await self.create_item(obj_in)
 
-        if not await check_name_slug(self.model, obj_in.name, obj_in.slug):
+        for item in relation_items:
+            await created_model.technology.add(item)
 
-            tech = obj_in.dict().pop('technology')
-            tech_items = await Tech.objects.filter(id__in=tech).all()
-            if not tech_items:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Technologies not found')
+        data = self.construct_data(created_model, response_model)
+        return data
 
-            try:
-                created_model = await self.model.objects.create(**obj_in.dict(exclude={'technology'}))
-            except Exception as e:
-                print(e)
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Model creation failed')
-
-            for item in tech_items:
-                await created_model.technology.add(item)
-
-            data = self.construct_data(created_model, response_model)
-            return data
-        else:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Such fields already exists')
+    async def update(self, pk: int, obj_in: UpdateSchemaType, response_model: ResponseSchemaType) -> BaseModel:
+        item = await self.get_item(pk=pk)
+        updated_item_dict = await self.update_item(pk,
+                                                   obj_in,
+                                                   item.technology,
+                                                   )
+        data = self.construct_data(updated_item_dict, response_model)
+        return data
 
 
 hardness_scales_service = HardnessScalesCRUD(HardnessScales)
@@ -116,6 +112,12 @@ imitationmaterial_service = ImitationMaterialCRUD(ImitationMaterial)
 chemicalresistance_service = ChemicalResistanceCRUD(ChemicalResistance)
 measuringstandards_service = MeasuringStandardsCRUD(MeasuringStandards)
 colors_service = ColorsCRUD(Colors)
-typetechnology_service = TypeTechnologyCRUD(TypeTech, rel=['technology'])
-tooltype_service = ToolTypeCRUD(ToolType, rel=['tool_class'])
-toolmanufacturer_service = ToolManufacturerCRUD(ToolMan, rel=['technology'], exclude=['country'])
+typetechnology_service = TypeTechnologyCRUD(TypeTech, rel=['technology'], exclude=None)
+tooltype_service = ToolTypeCRUD(ToolType, rel=['tool_class'], exclude=None)
+toolmanufacturer_service = ToolManufacturerCRUD(ToolMan,
+                                                rel=['technology'],
+                                                rel_name='toolmantech',
+                                                rel_model=Tech,
+                                                pl_name='Technology',
+                                                exclude=None
+                                                )
