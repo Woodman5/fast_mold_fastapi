@@ -22,7 +22,7 @@ class UrlMixin:
 
 
 class ShortDescriptionMixin:
-    short_desc = ormar.String(max_length=400)
+    short_desc = ormar.String(max_length=400, nullable=True)
 
 
 class TimestampMixin:

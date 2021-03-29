@@ -124,6 +124,7 @@ class ToolMan(AbstractBaseModel, NameMixin, ShortDescriptionMixin, DescriptionMi
 
 
 #  --------------------------------------------------
+# todo material = ormar.ForeignKey(Material)
 class ThermalChars(AbstractBaseModel):
     """ Thermal Characteristics Model """
 
@@ -138,6 +139,7 @@ class ThermalChars(AbstractBaseModel):
     temp_deform_st = ormar.ForeignKey(MeasuringStandards, related_name='temdef_st', nullable=True)
 
 
+# todo material = ormar.ForeignKey(Material)
 class ShockLoad(AbstractBaseModel):
     """ Shock Load Characteristics Model """
 
@@ -154,6 +156,7 @@ class ShockLoad(AbstractBaseModel):
 
 
 #  todo chemical_resistance = models.ManyToManyField(ChemicalResistance) перенести в Material
+# todo material = ormar.ForeignKey(Material)
 class MechanicalChars(AbstractBaseModel):
     """ Mechanical Characteristics Model """
 
@@ -216,6 +219,7 @@ class MechanicalChars(AbstractBaseModel):
     shrinkage_st = ormar.ForeignKey(MeasuringStandards, related_name='shr_st', nullable=True)
 
 
+# todo material = ormar.ForeignKey(Material)
 class ElectroProp(AbstractBaseModel):
     """ Electrical Characteristics Model """
 
@@ -233,6 +237,7 @@ class ElectroProp(AbstractBaseModel):
     dielectric_strength_st = ormar.ForeignKey(MeasuringStandards, related_name='ds_st', nullable=True)
 
 
+# todo material = ormar.ForeignKey(Material)
 class BurnTesting(AbstractBaseModel):
     """ Burn Testing Characteristics Model """
 
@@ -261,4 +266,259 @@ class BurnTesting(AbstractBaseModel):
     nbs_non_flamm_st = ormar.ForeignKey(MeasuringStandards, related_name='nbsn_st', nullable=True)
 
 
+#  todo support_mat = models.ManyToManyField(Material)
+# todo material = ormar.ForeignKey(Material)
+class Printing3D(AbstractBaseModel):
+    """ Printing3D Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_p3d"
+
+    mat_type = ormar.String(max_length=50, choices=common_data.mat_type_list, nullable=True)
+    supp_removing_desc = ormar.String(max_length=800, nullable=True)
+
+    fraction_dim = ormar.Decimal(minimum=0.0, maximum=10, max_digits=4, precision=2, nullable=True)
+    filament_diam = ormar.Decimal(minimum=0.0, maximum=10, max_digits=4, precision=2, nullable=True)
+
+    support = ormar.Boolean(nullable=True)
+    supp_removing = ormar.Boolean(nullable=True)
+
+    heat_release = ormar.Integer(minimum=0, maximum=99, nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class Silicone(AbstractBaseModel):
+    """ Silicone Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_sil"
+
+    tear_strength = ormar.Decimal(minimum=0.0, max_digits=8, precision=2, nullable=True)
+
+    silicon_base = ormar.Boolean(nullable=True)
+
+
+# todo hardener = models.ForeignKey(Material)
+# todo material = ormar.ForeignKey(Material)
+class Resins(AbstractBaseModel):
+    """ Resin Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_resins"
+
+    resin_type = ormar.String(max_length=50, choices=common_data.resin_type_list, nullable=True)
+
+    accel = ormar.Boolean(nullable=True)
+    pre_accel = ormar.Boolean(nullable=True)
+
+    hardener_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, precision=2, nullable=True)
+    accel_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, precision=2, nullable=True)
+    styrene_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, precision=2, nullable=True)
+
+    temp_glass = ormar.Integer(minimum=0, nullable=True)
+    temp1 = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    temp2 = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    temp3 = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    temp1_time = ormar.Integer(minimum=0, maximum=259200, nullable=True)  # 3 суток
+    temp2_time = ormar.Integer(minimum=0, maximum=259200, nullable=True)  # 3 суток
+    temp3_time = ormar.Integer(minimum=0, maximum=259200, nullable=True)  # 3 суток
+
+    temp_glass_st = ormar.ForeignKey(MeasuringStandards, related_name='temp_gl_st', nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class Fibers(AbstractBaseModel):
+    """ Fiber Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_fiber"
+
+    fiber_form = ormar.String(max_length=50, choices=common_data.fiber_form_list, nullable=True)
+    fiber_type = ormar.String(max_length=50, choices=common_data.fiber_type_list, nullable=True)
+    netting = ormar.String(max_length=50, choices=common_data.netting_list, nullable=True)
+
+    fb_density = ormar.Integer(minimum=0, maximum=50000, nullable=True)
+
+    fb_thickness = ormar.Decimal(minimum=0, maximum=20, max_digits=5, precision=3, nullable=True)
+    fb_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=5, precision=3, nullable=True)
+    fb_curing_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=6, precision=3, nullable=True)
+    fb_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=4, precision=2, nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class Prepregs(AbstractBaseModel):
+    """ Prepreg Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_prepreg"
+
+    plastic_density = ormar.Integer(minimum=0, maximum=50000, nullable=True)
+
+    pp_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=5, precision=3, nullable=True)
+    pp_autoclave_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=6, precision=3, nullable=True)
+    pp_vacuum_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=5, precision=3, nullable=True)
+    pp_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=4, precision=2, nullable=True)
+
+    self_adges = ormar.Boolean(nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class Cores(AbstractBaseModel):
+    """ Core Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_core"
+
+    core_type = ormar.String(max_length=50, choices=common_data.core_type_list, nullable=True)
+    core_material = ormar.String(max_length=50, choices=common_data.core_material_list, nullable=True)
+    default_thickness = ormar.String(max_length=50, choices=common_data.default_thickness_list, nullable=True)
+    cuts = ormar.String(max_length=100, nullable=True)
+
+    length = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    width = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+    thickness_min = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    thickness_max = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    cell_dim = ormar.Integer(minimum=0, maximum=10000, nullable=True)
+
+    wide_cells = ormar.Boolean(nullable=True)
+    double_cuts = ormar.Boolean(nullable=True)
+    fiber_support = ormar.Boolean(nullable=True)
+
+    perforation = ormar.Decimal(minimum=0, maximum=20, max_digits=3, precision=1, nullable=True)
+    resin_absorb = ormar.Decimal(minimum=0, maximum=100, max_digits=4, precision=2, nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class Storage(AbstractBaseModel):
+    """ Storage Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_storage"
+
+    expiry_date = ormar.Integer(minimum=0, maximum=600, nullable=True)
+    temp_stor_max = ormar.Integer(minimum=-273, maximum=1000, nullable=True)
+    temp_stor_min = ormar.Integer(minimum=-273, maximum=1000, nullable=True)
+    rt_expiry_date = ormar.Integer(minimum=0, maximum=2592000, nullable=True)  # 30 суток в секундах
+    rt_temp_stor = ormar.Integer(minimum=-273, maximum=1000, nullable=True)
+    humidity = ormar.Integer(minimum=0, maximum=100, nullable=True)
+    work_temp_min = ormar.Integer(minimum=-273, maximum=1000, nullable=True)
+
+    uv_protection = ormar.Boolean(nullable=True)
+
+    storage_desc = ormar.Text(nullable=True)
+    before_using_desc = ormar.Text(nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class MatFiles(AbstractBaseModel):
+    """ Material Files Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_mfiles"
+
+    tds_file = ormar.Text(nullable=True)  # URL
+    sert_file = ormar.Text(nullable=True)  # URL
+    avia_sert_file = ormar.Text(nullable=True)  # URL
+    ships_sert_file = ormar.Text(nullable=True)  # URL
+    space_sert_file = ormar.Text(nullable=True)  # URL
+    med_sert_file = ormar.Text(nullable=True)  # URL
+    food_sert_file = ormar.Text(nullable=True)  # URL
+    car_sert_file = ormar.Text(nullable=True)  # URL
+
+    additional_files = ormar.JSON(nullable=True)  # List[URL]
+
+    avia_desc = ormar.String(max_length=400, nullable=True)
+    ships_desc = ormar.String(max_length=400, nullable=True)
+    space_desc = ormar.String(max_length=400, nullable=True)
+    med_desc = ormar.String(max_length=400, nullable=True)
+    food_desc = ormar.String(max_length=400, nullable=True)
+    car_desc = ormar.String(max_length=400, nullable=True)
+
+
+class Filler(AbstractBaseModel, NameMixin, ShortDescriptionMixin):
+    """ Filler Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_filler"
+
+
+class ChemicalCompound(AbstractBaseModel, NameMixin, ShortDescriptionMixin):
+    """ Chemical Compound Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_ccomp"
+
+
+# todo covering = models.ForeignKey(Material)
+# todo material = ormar.ForeignKey(Material)
+class MineralFiller(AbstractBaseModel):
+    """ Mineral Filler Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_mfiller"
+
+    filler = ormar.ForeignKey(Filler, related_name='filler', nullable=True)
+    compound = ormar.ForeignKey(ChemicalCompound, related_name='compound', nullable=True)
+
+    fraction = ormar.Decimal(minimum=0, maximum=10, max_digits=8, precision=7, nullable=True)
+    real_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=4, precision=3, nullable=True)
+    fake_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=4, precision=3, nullable=True)
+
+
+# todo material = ormar.ForeignKey(Material)
+class TechnologyChars(AbstractBaseModel):
+    """ Technology Characteristics Model """
+
+    class Meta(ormar.ModelMeta):
+        tablename = "hb_tchars"
+
+    mix_density = ormar.Decimal(minimum=0, max_digits=8, precision=2, nullable=True)
+    wall_thickness_min = ormar.Decimal(minimum=0, max_digits=4, precision=2, nullable=True)
+    wall_thickness_max = ormar.Decimal(minimum=0, max_digits=4, precision=2, nullable=True)
+    hole_min = ormar.Decimal(minimum=0, max_digits=4, precision=2, nullable=True)
+    fillet_min = ormar.Decimal(minimum=0, max_digits=4, precision=2, nullable=True)
+    part_volume_max = ormar.Decimal(minimum=0, max_digits=10, precision=1, nullable=True)
+
+    tool_tempr_start = ormar.Integer(minimum=0, nullable=True)
+    comp_tempr_start = ormar.Integer(minimum=0, nullable=True)
+    comp_tempr_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    degasation = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    degasation_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    mixing_degasation = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    mixing_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    life_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    life_time_temp_min = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    life_time_temp_max = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    degasation_before_molding = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    degasation_before_molding_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    degasation_during_molding = ormar.Integer(minimum=0, maximum=1000, nullable=True)
+    degasation_during_molding_time = ormar.Integer(minimum=0, maximum=86400, nullable=True)
+    curing_inmold_time = ormar.Integer(minimum=0, maximum=2592000, nullable=True)
+    temp_curing_inmold_min = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    temp_curing_inmold_max = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    demold_time = ormar.Integer(minimum=0, maximum=259200, nullable=True)
+    demold_time_temp_min = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    demold_time_temp_max = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    curing_time = ormar.Integer(minimum=0, maximum=2592000, nullable=True)
+    curing_time_temp_min = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+    curing_time_temp_max = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
+
+    wall_thickness_min_desc = ormar.String(max_length=400, nullable=True)
+    wall_thickness_max_desc = ormar.String(max_length=400, nullable=True)
+    tool_tempr_start_desc = ormar.String(max_length=400, nullable=True)
+    comp_tempr_start_desc = ormar.String(max_length=400, nullable=True)
+    degasation_desc = ormar.String(max_length=400, nullable=True)
+    mixing_degasation_desc = ormar.String(max_length=400, nullable=True)
+    mixing_desc = ormar.String(max_length=400, nullable=True)
+    life_time_desc = ormar.String(max_length=400, nullable=True)
+    degasation_before_molding_desc = ormar.String(max_length=400, nullable=True)
+    degasation_during_molding_desc = ormar.String(max_length=400, nullable=True)
+    curing_inmold_desc = ormar.String(max_length=400, nullable=True)
+    demold_time_desc = ormar.String(max_length=400, nullable=True)
+    curing_time_desc = ormar.String(max_length=400, nullable=True)
+
+    painting = ormar.JSON()  # мультиселект из списка painting_list
+
+    mix_density_st = ormar.ForeignKey(MeasuringStandards, related_name='mixd_st', nullable=True)
+    life_time_st = ormar.ForeignKey(MeasuringStandards, related_name='lft_st', nullable=True)
 
