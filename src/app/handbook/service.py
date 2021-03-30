@@ -22,10 +22,10 @@ from .models.material import (
     Tech,
     ToolClass,
     MaterialType,
-    ImitationMaterial,
-    ChemicalResistance,
+    Imitation,
+    ChemicalRes,
     MeasuringStandards,
-    Colors,
+    Color,
     TypeTech,
     ToolType,
     ToolMan,
@@ -108,10 +108,10 @@ status_service = StatusCRUD(Status)
 technology_service = TechnologyCRUD(Tech)
 toolclass_service = ToolClassCRUD(ToolClass)
 materialtype_service = MaterialTypeCRUD(MaterialType)
-imitationmaterial_service = ImitationMaterialCRUD(ImitationMaterial)
-chemicalresistance_service = ChemicalResistanceCRUD(ChemicalResistance)
+imitationmaterial_service = ImitationMaterialCRUD(Imitation)
+chemicalresistance_service = ChemicalResistanceCRUD(ChemicalRes)
 measuringstandards_service = MeasuringStandardsCRUD(MeasuringStandards)
-colors_service = ColorsCRUD(Colors)
+colors_service = ColorsCRUD(Color)
 typetechnology_service = TypeTechnologyCRUD(TypeTech, rel=['technology'], exclude=None)
 tooltype_service = ToolTypeCRUD(ToolType, rel=['tool_class'], exclude=None)
 toolmanufacturer_service = ToolManufacturerCRUD(ToolMan,

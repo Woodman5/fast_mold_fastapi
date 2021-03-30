@@ -146,7 +146,7 @@ class MatParam(AbstractBaseModel):
     visc_st = ormar.ForeignKey(MeasuringStandards, related_name='visc_st', nullable=True)
     simplehard = ormar.ForeignKey(CommonHardness, related_name='hd_com', nullable=True)
 
-    imitation = ormar.ManyToMany(Imitation)
+    mat_imitation = ormar.ManyToMany(Imitation)
 
     # Thermal Characteristics
     thermal_expansion = ormar.Decimal(minimum=0.0, max_digits=12, decimal_places=8, nullable=True)
@@ -729,8 +729,8 @@ class Material(AbstractBaseModel, NameMixin, ShortDescriptionMixin, UrlMixin, Ti
     technology = ormar.ForeignKey(TechnologyChars, related_name='techchar', nullable=True, unique=True)
 
     type_technology = ormar.ManyToMany(TypeTech, related_name='techtypes')
-    color = ormar.ManyToMany(Color, related_name='matcolors')
-    component = ormar.ManyToMany(Component, related_name='matcomp')
+    matcolor = ormar.ManyToMany(Color, related_name='matcolors')
+    matcomponent = ormar.ManyToMany(Component, related_name='matcomp', nullable=True)
 
     application = ormar.JSON(nullable=True)  # мультиселект из списка application_choices
 

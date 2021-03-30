@@ -4,6 +4,7 @@ from src.app.auth.permissions import get_superuser, get_user
 
 from src.app.handbook import schemas
 from src.app.handbook import service
+from src.app.handbook import mat_service, mat_schema
 from src.app.handbook.models import material
 from src.app.base.router_base import get_customized_router
 
@@ -124,3 +125,15 @@ handbook_router.include_router(colors_router, tags=['Colors'])  # , dependencies
 handbook_router.include_router(typetechnology_router, tags=['Tech types'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(tooltype_router, tags=['Tool types'])  # , dependencies=[Depends(get_user)])
 handbook_router.include_router(toolmanufacturer_router, tags=['Tool Manufactures'])  # , dependencies=[Depends(get_user)])
+#
+#
+#
+material_router = get_customized_router(url='/materials',
+                                        service=mat_service.material_service,
+                                        response_schema=material.Material,
+                                        create_schema=mat_schema.MaterialUpdate,
+                                        # create_schema=mat_properties.ToolMan,
+                                        update_schema=material.Material,
+                                        name='Materials'
+                                        )
+handbook_router.include_router(material_router, tags=['Materials'])
