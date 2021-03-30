@@ -1,1 +1,1 @@
-from . import mat_properties
+from . import material

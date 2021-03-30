@@ -15,7 +15,7 @@ from src.app.base.service_base import (
     check_name_slug)
 
 from .models import common_data
-from .models.mat_properties import (
+from .models.material import (
     HardnessScales,
     CommonHardness,
     Status,
