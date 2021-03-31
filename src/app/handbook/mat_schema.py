@@ -5,6 +5,7 @@ from fastapi import Body, Form
 from pydantic import BaseModel, validator, ValidationError
 
 from .models import common_data
+from .schemas import TypeTechnologyGet
 
 
 def check_value_in_list(value, value_list):
@@ -29,15 +30,33 @@ class MaterialUpdate(BaseModel):
     matcolor: Optional[List[int]]
     matcomponent: Optional[List[int]]
 
-    manufacturer: Optional[int]
-    mat_type: Optional[int]
-    mat: Optional[int]
-    mech: Optional[int]
-    p3d: Optional[int]
-    gfrp: Optional[int]
-    filler: Optional[int]
-    technology: Optional[int]
+    manufacturer: Optional[ForeignGet]
+    mat_type: Optional[ForeignGet]
+    mat: Optional[ForeignGet]
+    mech: Optional[ForeignGet]
+    p3d: Optional[ForeignGet]
+    gfrp: Optional[ForeignGet]
+    filler: Optional[ForeignGet]
+    tech_param: Optional[ForeignGet]
 
+
+class MaterialCreate(MaterialUpdate):
+    name: str
+    slug: str
+    country: str
+
+    type_technology: List[int]
+    matcolor: List[int]
+
+    manufacturer: ForeignGet
+    mat_type: ForeignGet
+
+
+class MaterialGet(MaterialUpdate):
+    id: int
+    type_technology: List[ForeignGet]
+    matcolor: List[ForeignGet]
+    matcomponent: List[ForeignGet]
 
 # class TypeTechnologyCreate(TypeTechnologyUpdate):
 #     name: str

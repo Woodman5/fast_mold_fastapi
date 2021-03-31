@@ -40,6 +40,7 @@ class CRUDBase:
     async def get_item(self, pk: int):
         try:
             item = await self.model.objects.get(id=pk)
+            print('CRUDBase ---', item.dict())
         except NoMatch:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
         except MultipleMatches:
@@ -112,7 +113,7 @@ class CRUDBase:
         item = await self.get_item(pk=pk)
         obj_in = obj_in.dict(exclude_unset=True)
         if 'updated' in self.model.__fields__.keys():
-            obj_in['updated'] = datetime.now()
+            obj_in['updated'] = datetime.now(timezone.utc)
         await item.update(**obj_in)
         data = self.construct_data(item, response_model)
         return data
@@ -143,6 +144,7 @@ class CRUDRelations(CRUDBase):
     async def get_item(self, pk: int):
         try:
             item = await self.model.objects.select_related(self.rel).exclude_fields(self.exclude).get(id=pk)
+            print('CRUDRelations ---', item.dict())
         except NoMatch:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
         except MultipleMatches:
@@ -153,6 +155,8 @@ class CRUDRelations(CRUDBase):
 
         if 'item_removed' in self.model.__fields__.keys() and item.item_removed:
             raise HTTPException(status_code=status.HTTP_410_GONE, detail='Item removed')
+
+        print('CRUDRelations 2 ---', item.dict())
         return item
 
     async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:

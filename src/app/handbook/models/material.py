@@ -719,14 +719,14 @@ class Material(AbstractBaseModel, NameMixin, ShortDescriptionMixin, UrlMixin, Ti
 
     country = ormar.String(max_length=800)
 
-    manufacturer = ormar.ForeignKey(ToolMan, related_name='toolman', nullable=True)
-    mat_type = ormar.ForeignKey(MaterialType, related_name='mtype', nullable=True)
+    manufacturer = ormar.ForeignKey(ToolMan, related_name='toolman')
+    mat_type = ormar.ForeignKey(MaterialType, related_name='mtype')
     mat = ormar.ForeignKey(MatParam, related_name='mparam', nullable=True, unique=True)
     mech = ormar.ForeignKey(MechanicalChars, related_name='mechparam', nullable=True, unique=True)
     p3d = ormar.ForeignKey(Printing3D, related_name='p3dparam', nullable=True, unique=True)
     gfrp = ormar.ForeignKey(GFRParams, related_name='gfrpparam', nullable=True, unique=True)
     filler = ormar.ForeignKey(MineralFiller, related_name='fillerparam', nullable=True, unique=True)
-    technology = ormar.ForeignKey(TechnologyChars, related_name='techchar', nullable=True, unique=True)
+    tech_param = ormar.ForeignKey(TechnologyChars, related_name='techchar', nullable=True, unique=True)
 
     type_technology = ormar.ManyToMany(TypeTech, related_name='techtypes')
     matcolor = ormar.ManyToMany(Color, related_name='matcolors')

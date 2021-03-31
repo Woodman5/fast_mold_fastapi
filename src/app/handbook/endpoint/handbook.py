@@ -130,10 +130,9 @@ handbook_router.include_router(toolmanufacturer_router, tags=['Tool Manufactures
 #
 material_router = get_customized_router(url='/materials',
                                         service=mat_service.material_service,
-                                        response_schema=material.Material,
-                                        create_schema=mat_schema.MaterialUpdate,
-                                        # create_schema=mat_properties.ToolMan,
-                                        update_schema=material.Material,
+                                        response_schema=mat_schema.MaterialGet,
+                                        create_schema=mat_schema.MaterialCreate,
+                                        update_schema=mat_schema.MaterialUpdate,
                                         name='Materials'
                                         )
 handbook_router.include_router(material_router, tags=['Materials'])

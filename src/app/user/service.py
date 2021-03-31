@@ -40,7 +40,7 @@ class CRUDUser(CRUDBase):
         obj_in = obj_in.dict()
         hash_password = get_password_hash(obj_in.pop("password"))
         customer = await Role.objects.filter(slug='customer').get()
-        obj_in['created'] = datetime.datetime.now()
+        obj_in['created'] = datetime.datetime.now(datetime.timezone.utc)
         obj_in['user_uuid'] = uuid.uuid4()
         user = await self.model.objects.create(**obj_in,
                                                password=hash_password,
@@ -59,7 +59,7 @@ class CRUDUser(CRUDBase):
     async def remove(self, pk: int) -> int:
         if 'item_removed' in self.model.__fields__.keys():
             item = await self.model.objects.get(id=pk)
-            time_for_name = int(datetime.datetime.now().timestamp())
+            time_for_name = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             new_name = f'deletedrow_{item.username}_{time_for_name}'
             email_parts = item.email.split('@')
             new_email = f'deletedrow_{email_parts[0]}_{time_for_name}@{email_parts[1]}'
