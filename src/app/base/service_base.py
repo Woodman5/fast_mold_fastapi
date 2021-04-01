@@ -209,10 +209,16 @@ class CRUDRelationsM2M(CRUDRelations):
         for item in m2m_items:
             await relation_field.add(item)
 
-    def remove_field(self, item, key, field):
+    def remove_field(self, item, keys: Union[str, tuple, list], fields: Union[str, tuple, list]):
         item_dict = item.dict()
-        for key in item_dict[key]:
-            key.pop(field)
+        if isinstance(keys, str):
+            keys = (keys,)
+        if isinstance(fields, str):
+            fields = (fields,)
+        for key in keys:
+            for data in item_dict[key]:
+                for field in fields:
+                    data.pop(field, None)
         # print('------', item_dict, sep='\n')
         return item_dict
 

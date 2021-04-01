@@ -146,7 +146,7 @@ class MatParam(AbstractBaseModel):
     visc_st = ormar.ForeignKey(MeasuringStandards, related_name='visc_st', nullable=True)
     simplehard = ormar.ForeignKey(CommonHardness, related_name='hd_com', nullable=True)
 
-    mat_imitation = ormar.ManyToMany(Imitation)
+    mat_imitation = ormar.ManyToMany(Imitation, nullable=True)
 
     # Thermal Characteristics
     thermal_expansion = ormar.Decimal(minimum=0.0, max_digits=12, decimal_places=8, nullable=True)

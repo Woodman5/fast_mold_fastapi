@@ -26,18 +26,18 @@ class MaterialUpdate(BaseModel):
     application: Optional[str]
     url: Optional[str]
 
-    type_technology: Optional[List[int]]
-    matcolor: Optional[List[int]]
-    matcomponent: Optional[List[int]]
+    type_technology: Optional[List[int]]  # must be for any material
+    matcolor: Optional[List[int]]  # must be for any material
+    matcomponent: Optional[List[int]]  # can be for any material
 
-    manufacturer: Optional[ForeignGet]
-    mat_type: Optional[ForeignGet]
-    mat: Optional[ForeignGet]
-    mech: Optional[ForeignGet]
-    p3d: Optional[ForeignGet]
-    gfrp: Optional[ForeignGet]
-    filler: Optional[ForeignGet]
-    tech_param: Optional[ForeignGet]
+    manufacturer: Optional[ForeignGet]  # must be for any material
+    mat_type: Optional[ForeignGet]  # must be for any material
+    mat: Optional[ForeignGet]  # can be for any material
+    mech: Optional[ForeignGet]  # can be for almost any material
+    p3d: Optional[ForeignGet]  # can be only for 3D printing
+    gfrp: Optional[ForeignGet]  # can be only for Composite (resins, prepregs, gfrp, gfip, cfrp etc.)
+    filler: Optional[ForeignGet]  # can be only for PU materials
+    tech_param: Optional[ForeignGet]  # can be for any material
 
 
 class MaterialCreate(MaterialUpdate):

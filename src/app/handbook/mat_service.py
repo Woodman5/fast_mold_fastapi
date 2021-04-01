@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import List, Optional, Set, TypeVar, Type, Sequence, Union, Dict
 from datetime import datetime, timezone
 import pytz
@@ -59,6 +60,12 @@ class MaterialCRUD(CRUDRelationsM2M):
         ('matcomponent', Component, 'Components'),
     ]
 
+    fields_to_del = (
+        'materialcolor',
+        'materialtypetech',
+        'materialcomponent',
+    )
+
     one_name = 'material'
     pl_name = 'materials'
     rel_name = ''
@@ -68,9 +75,9 @@ class MaterialCRUD(CRUDRelationsM2M):
 
     async def get(self, pk: int, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
         item = await self.get_item(pk=pk)
-        print('Original GET ---', item.dict())
-        # item_dict = self.remove_field(item, self.rel[0], self.rel_name)
-        data = self.construct_data(item, response_model)
+        pprint('Original GET ---', item.dict())
+        item_dict = self.remove_field(item, self.rel, self.fields_to_del)
+        data = self.construct_data(item_dict, response_model)
         return data
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType):
