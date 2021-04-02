@@ -2,7 +2,7 @@ from typing import Optional, List
 from datetime import datetime
 
 from fastapi import Body, Form
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, validator, ValidationError, Json
 
 from .models import common_data
 from .models.material import (
@@ -57,7 +57,7 @@ class MaterialUpdate(BaseModel):
     slug: Optional[str]
     short_desc: Optional[str]
     country: Optional[str]
-    application: Optional[str]
+    application: Optional[Json]
     url: Optional[str]
 
     type_technology: Optional[List[int]]  # must be for any material
