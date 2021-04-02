@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import List, Optional, Set, TypeVar, Type, Sequence, Union, Dict
 from datetime import datetime, timezone
 import pytz
@@ -215,10 +216,12 @@ class CRUDRelationsM2M(CRUDRelations):
             keys = (keys,)
         if isinstance(fields, str):
             fields = (fields,)
-        for key in keys:
-            for data in item_dict[key]:
-                for field in fields:
-                    data.pop(field, None)
+        # pprint(keys)
+        # pprint(fields)
+        for key, value in enumerate(keys):
+            if item_dict[value]:
+                for item in item_dict[value]:
+                    item.pop(fields[key], None)
         # print('------', item_dict, sep='\n')
         return item_dict
 

@@ -20,8 +20,8 @@ class HardnessScales(AbstractBaseModel, NameMixin, DescriptionMixin):
     class Meta(ormar.ModelMeta):
         tablename = "hb_hd"
 
-    hs_min = ormar.Integer(default=0)
-    hs_max = ormar.Integer(default=100)
+    hs_min = ormar.Integer()
+    hs_max = ormar.Integer()
     hs_units = ormar.String(max_length=30, nullable=True)
 
 
@@ -138,7 +138,7 @@ class MatParam(AbstractBaseModel):
     viscosity = ormar.Integer(minimum=0, nullable=True)
     temp_viscosity = ormar.Integer(minimum=0, maximum=1000000, nullable=True)
 
-    density = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
+    density = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
 
     hard_scale = ormar.ForeignKey(HardnessScales, related_name='hd_scale', nullable=True)
     hard_st = ormar.ForeignKey(MeasuringStandards, related_name='hd_st', nullable=True)
@@ -149,7 +149,7 @@ class MatParam(AbstractBaseModel):
     mat_imitation = ormar.ManyToMany(Imitation, nullable=True)
 
     # Thermal Characteristics
-    thermal_expansion = ormar.Decimal(minimum=0.0, max_digits=12, decimal_places=8, nullable=True)
+    thermal_expansion = ormar.Decimal(minimum=0.0, max_digits=14, decimal_places=8, nullable=True)
     temp_oper_min = ormar.Integer(minimum=-274, nullable=True)
     temp_deform = ormar.Integer(minimum=-274, nullable=True)
 
@@ -157,19 +157,19 @@ class MatParam(AbstractBaseModel):
     temp_deform_st = ormar.ForeignKey(MeasuringStandards, related_name='temdef_st', nullable=True)
 
     # Shock Load Characteristics
-    izod_notched = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    izod_unnotched = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    sharpy = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
+    izod_notched = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    izod_unnotched = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    sharpy = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
 
     izod_notch_st = ormar.ForeignKey(MeasuringStandards, related_name='in_st', nullable=True)
     izod_unnotch_st = ormar.ForeignKey(MeasuringStandards, related_name='iun_st', nullable=True)
     sharpy_st = ormar.ForeignKey(MeasuringStandards, related_name='sh_st', nullable=True)
 
     # Electrical Characteristics
-    dielectric_const = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    volume_resistivity = ormar.Decimal(minimum=0.0, max_digits=20, decimal_places=18, nullable=True)
-    dissipation_factor = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=5, nullable=True)
-    dielectric_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=5, nullable=True)
+    dielectric_const = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    volume_resistivity = ormar.Decimal(minimum=0.0, max_digits=22, decimal_places=18, nullable=True)
+    dissipation_factor = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=5, nullable=True)
+    dielectric_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=5, nullable=True)
 
     dielect_const_st = ormar.ForeignKey(MeasuringStandards, related_name='dc_st', nullable=True)
     vol_resist_st = ormar.ForeignKey(MeasuringStandards, related_name='vr_st', nullable=True)
@@ -232,7 +232,7 @@ class MatParam(AbstractBaseModel):
     car_desc = ormar.String(max_length=400, nullable=True)
 
     # Silicone Characteristics
-    tear_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
+    tear_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
 
     silicon_base = ormar.Boolean(nullable=True)
 
@@ -263,32 +263,32 @@ class MechanicalChars(AbstractBaseModel):
     class Meta(ormar.ModelMeta):
         tablename = "hb_mechchars"
 
-    tensile_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    flexural_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    compres_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_strength_lengthwise = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_strength_crosswise = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    elastic_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    tensile_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    flexural_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    compressive_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_modulus_lengthwise = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_modulus_crosswise = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    elongation_at_break = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    interlaminar_shear_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    shear_strain = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    single_shear_bearing = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    openhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    openhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    filledhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    filledhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    filledhole_compression_strength = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    filledhole_compression_modulus = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    tool_side_peel = ormar.Decimal(minimum=0.0, max_digits=8, decimal_places=2, nullable=True)
-    water_absorption = ormar.Decimal(minimum=0.0, max_digits=5, decimal_places=2, nullable=True)
-    shrinkage = ormar.Decimal(minimum=0.0, max_digits=5, decimal_places=2, nullable=True)
+    tensile_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    flexural_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    compres_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_strength_lengthwise = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_strength_crosswise = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    elastic_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    tensile_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    flexural_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    compressive_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_modulus_lengthwise = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_modulus_crosswise = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    elongation_at_break = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    interlaminar_shear_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    shear_strain = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    single_shear_bearing = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    openhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    openhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    filledhole_tension_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    filledhole_tension_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    filledhole_compression_strength = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    filledhole_compression_modulus = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    tool_side_peel = ormar.Decimal(minimum=0.0, max_digits=10, decimal_places=2, nullable=True)
+    water_absorption = ormar.Decimal(minimum=0.0, max_digits=7, decimal_places=2, nullable=True)
+    shrinkage = ormar.Decimal(minimum=0.0, max_digits=7, decimal_places=2, nullable=True)
 
     shrinkage_desc = ormar.String(max_length=400, nullable=True)
 
@@ -377,8 +377,8 @@ class Printing3D(AbstractBaseModel):
     mat_type = ormar.String(max_length=50, choices=common_data.mat_type_list, nullable=True)
     supp_removing_desc = ormar.String(max_length=800, nullable=True)
 
-    fraction_dim = ormar.Decimal(minimum=0.0, maximum=10, max_digits=4, decimal_places=2, nullable=True)
-    filament_diam = ormar.Decimal(minimum=0.0, maximum=10, max_digits=4, decimal_places=2, nullable=True)
+    fraction_dim = ormar.Decimal(minimum=0.0, maximum=12, max_digits=4, decimal_places=2, nullable=True)
+    filament_diam = ormar.Decimal(minimum=0.0, maximum=12, max_digits=4, decimal_places=2, nullable=True)
 
     support = ormar.Boolean(nullable=True)
     supp_removing = ormar.Boolean(nullable=True)
@@ -414,9 +414,9 @@ class GFRParams(AbstractBaseModel):
     accel = ormar.Boolean(nullable=True)
     pre_accel = ormar.Boolean(nullable=True)
 
-    hardener_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
-    accel_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
-    styrene_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
+    hardener_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=5, decimal_places=2, nullable=True)
+    accel_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=5, decimal_places=2, nullable=True)
+    styrene_percent = ormar.Decimal(minimum=0.0, maximum=100, max_digits=5, decimal_places=2, nullable=True)
 
     temp_glass = ormar.Integer(minimum=0, nullable=True)
     temp1 = ormar.Integer(minimum=-273, maximum=10000, nullable=True)
@@ -436,18 +436,18 @@ class GFRParams(AbstractBaseModel):
 
     fb_density = ormar.Integer(minimum=0, maximum=50000, nullable=True)
 
-    fb_thickness = ormar.Decimal(minimum=0, maximum=20, max_digits=5, decimal_places=3, nullable=True)
-    fb_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=5, decimal_places=3, nullable=True)
-    fb_curing_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=6, decimal_places=3, nullable=True)
-    fb_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
+    fb_thickness = ormar.Decimal(minimum=0, maximum=20, max_digits=7, decimal_places=3, nullable=True)
+    fb_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=7, decimal_places=3, nullable=True)
+    fb_curing_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=8, decimal_places=3, nullable=True)
+    fb_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=5, decimal_places=2, nullable=True)
 
     # Prepreg Characteristics
     plastic_density = ormar.Integer(minimum=0, maximum=50000, nullable=True)
 
-    pp_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=5, decimal_places=3, nullable=True)
-    pp_autoclave_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=6, decimal_places=3, nullable=True)
-    pp_vacuum_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=5, decimal_places=3, nullable=True)
-    pp_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
+    pp_thickness_curing = ormar.Decimal(minimum=0, maximum=20, max_digits=7, decimal_places=3, nullable=True)
+    pp_autoclave_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=8, decimal_places=3, nullable=True)
+    pp_vacuum_pressure = ormar.Decimal(minimum=0, maximum=20, max_digits=7, decimal_places=3, nullable=True)
+    pp_resin_percent = ormar.Decimal(minimum=0, maximum=100, max_digits=5, decimal_places=2, nullable=True)
 
     self_adges = ormar.Boolean(nullable=True)
 
@@ -467,8 +467,8 @@ class GFRParams(AbstractBaseModel):
     double_cuts = ormar.Boolean(nullable=True)
     fiber_support = ormar.Boolean(nullable=True)
 
-    perforation = ormar.Decimal(minimum=0, maximum=20, max_digits=3, decimal_places=1, nullable=True)
-    resin_absorb = ormar.Decimal(minimum=0, maximum=100, max_digits=4, decimal_places=2, nullable=True)
+    perforation = ormar.Decimal(minimum=0, maximum=20, max_digits=4, decimal_places=1, nullable=True)
+    resin_absorb = ormar.Decimal(minimum=0, maximum=100, max_digits=6, decimal_places=2, nullable=True)
 
 
 # todo material = ormar.ForeignKey(Material)
@@ -608,8 +608,8 @@ class MineralFiller(AbstractBaseModel):
     covering: MaterialRef = ormar.ForeignKey(MaterialRef, related_name='covering', nullable=True)
 
     fraction = ormar.Decimal(minimum=0, maximum=10, max_digits=8, decimal_places=7, nullable=True)
-    real_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=4, decimal_places=3, nullable=True)
-    fake_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=4, decimal_places=3, nullable=True)
+    real_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=7, decimal_places=3, nullable=True)
+    fake_density = ormar.Decimal(minimum=0, maximum=1000, max_digits=7, decimal_places=3, nullable=True)
 
 
 # todo material = ormar.ForeignKey(Material)
@@ -621,12 +621,12 @@ class TechnologyChars(AbstractBaseModel):
     class Meta(ormar.ModelMeta):
         tablename = "hb_tchars"
 
-    mix_density = ormar.Decimal(minimum=0, max_digits=8, decimal_places=2, nullable=True)
-    wall_thickness_min = ormar.Decimal(minimum=0, max_digits=4, decimal_places=2, nullable=True)
-    wall_thickness_max = ormar.Decimal(minimum=0, max_digits=4, decimal_places=2, nullable=True)
-    hole_min = ormar.Decimal(minimum=0, max_digits=4, decimal_places=2, nullable=True)
-    fillet_min = ormar.Decimal(minimum=0, max_digits=4, decimal_places=2, nullable=True)
-    part_volume_max = ormar.Decimal(minimum=0, max_digits=10, decimal_places=1, nullable=True)
+    mix_density = ormar.Decimal(minimum=0, max_digits=10, decimal_places=2, nullable=True)
+    wall_thickness_min = ormar.Decimal(minimum=0, max_digits=6, decimal_places=2, nullable=True)
+    wall_thickness_max = ormar.Decimal(minimum=0, max_digits=6, decimal_places=2, nullable=True)
+    hole_min = ormar.Decimal(minimum=0, max_digits=6, decimal_places=2, nullable=True)
+    fillet_min = ormar.Decimal(minimum=0, max_digits=6, decimal_places=2, nullable=True)
+    part_volume_max = ormar.Decimal(minimum=0, max_digits=11, decimal_places=1, nullable=True)
 
     tool_tempr_start = ormar.Integer(minimum=0, nullable=True)
     comp_tempr_start = ormar.Integer(minimum=0, nullable=True)
@@ -666,7 +666,7 @@ class TechnologyChars(AbstractBaseModel):
     demold_time_desc = ormar.String(max_length=400, nullable=True)
     curing_time_desc = ormar.String(max_length=400, nullable=True)
 
-    painting = ormar.JSON()  # мультиселект из списка painting_list
+    painting = ormar.JSON(nullable=True)  # мультиселект из списка painting_list
 
     mix_density_st = ormar.ForeignKey(MeasuringStandards, related_name='mixd_st', nullable=True)
     life_time_st = ormar.ForeignKey(MeasuringStandards, related_name='lft_st', nullable=True)
@@ -705,8 +705,8 @@ class Component(AbstractBaseModel):
     comp_index = ormar.String(max_length=3, nullable=True)
     composition = ormar.String(max_length=400, nullable=True)
 
-    proportions_weight = ormar.Decimal(minimum=0, max_digits=5, decimal_places=2, nullable=True)
-    proportions_volume = ormar.Decimal(minimum=0, max_digits=5, decimal_places=2, nullable=True)
+    proportions_weight = ormar.Decimal(minimum=0, max_digits=7, decimal_places=2, nullable=True)
+    proportions_volume = ormar.Decimal(minimum=0, max_digits=7, decimal_places=2, nullable=True)
 
     component_mat: MaterialRef = ormar.ForeignKey(MaterialRef, related_name='compmat', nullable=True)
 
@@ -731,6 +731,7 @@ class Material(AbstractBaseModel, NameMixin, ShortDescriptionMixin, UrlMixin, Ti
     type_technology = ormar.ManyToMany(TypeTech, related_name='techtypes')
     matcolor = ormar.ManyToMany(Color, related_name='matcolors')
     matcomponent = ormar.ManyToMany(Component, related_name='matcomp', nullable=True)
+    cust_param = ormar.ManyToMany(CustomMatParam, related_name='cparam', nullable=True)
 
     application = ormar.JSON(nullable=True)  # мультиселект из списка application_choices
 

@@ -3,6 +3,8 @@ from typing import List, Optional, Set, TypeVar, Type, Sequence, Union, Dict
 from datetime import datetime, timezone
 import pytz
 
+from decimal import Decimal
+
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status
 from pydantic import BaseModel
@@ -24,6 +26,7 @@ from .models.material import (
     TypeTech,
     Color,
     Component,
+    CustomMatParam,
 )
 from src.app.base.service_base import (
     CRUDRelationsM2M,
@@ -37,11 +40,25 @@ QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
 ResponseSchemaType = Type[BaseModel]
 
 
+# removing all empty (None, "", []) data from dictionaries. Zeros are keeping.
+def clear_dict(data: Dict) -> Dict:
+    temp_data = data.copy()
+    for k, v in temp_data.items():
+        if isinstance(v, dict):
+            clear_dict(v)
+        if k == 'item_removed' or not v and not isinstance(v, (int, float, Decimal)):
+            data.pop(k)
+    return data
+
+
 class MaterialCRUD(CRUDRelationsM2M):
 
     rel = [
+        # this models must exist in DB prior material creation
         'manufacturer',
         'mat_type',
+
+        # this models need to create in DB prior material creation
         'mat',
         'mech',
         'p3d',
@@ -49,21 +66,34 @@ class MaterialCRUD(CRUDRelationsM2M):
         'filler',
         'tech_param',
 
+        # this M2M models must exist in DB prior material creation
         'type_technology',
         'matcolor',
         'matcomponent',
+        'cust_param',
     ]
 
     m2m_rel = [
         ('type_technology', TypeTech, 'Technology types'),
         ('matcolor', Color, 'Colors'),
         ('matcomponent', Component, 'Components'),
+        ('cust_param', CustomMatParam, 'Custom parameters'),
     ]
 
     fields_to_del = (
-        'materialcolor',
         'materialtypetech',
+        'materialcolor',
         'materialcomponent',
+        'materialcustommatparam',
+    )
+
+    rel_to_be_created = (
+        MatParam,
+        MechanicalChars,
+        Printing3D,
+        GFRParams,
+        MineralFiller,
+        TechnologyChars,
     )
 
     one_name = 'material'
@@ -75,15 +105,32 @@ class MaterialCRUD(CRUDRelationsM2M):
 
     async def get(self, pk: int, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
         item = await self.get_item(pk=pk)
-        pprint('Original GET ---', item.dict())
-        item_dict = self.remove_field(item, self.rel, self.fields_to_del)
+        print('Original GET ---', )
+        # pprint(item.dict())
+        item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
         data = self.construct_data(item_dict, response_model)
         return data
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType):
         if not await check_name_slug(self.model, obj_in.name, obj_in.slug):
             m2m_relations_list = []
-            data = obj_in.dict(exclude_unset=True)
+            pprint(obj_in)
+            data = obj_in.dict(exclude_unset=True, exclude_none=True, exclude_defaults=True)
+            print('--1--')
+            pprint(data)
+            data = clear_dict(data)
+            print('--2--')
+            pprint(data)
+            for key, rel in enumerate(self.rel[2:-4:]):
+                print('--rel--', rel)
+                model_data = data.pop(rel, None)
+                if model_data:
+                    pprint(model_data)
+                    pprint(self.rel_to_be_created[key])
+                    db_model = await self.rel_to_be_created[key].objects.create(**model_data)
+                    data[rel] = {'id': db_model.id}
+                    # print('--id--', data[rel])
+
             for m2m in self.m2m_rel:
                 if m2m[0] not in data:
                     continue
@@ -95,6 +142,8 @@ class MaterialCRUD(CRUDRelationsM2M):
                 m2m_relations_list.append((m2m[0], relation_items))
 
             data['created'] = datetime.now(timezone.utc)
+            print('Original POST ---', )
+            pprint(data)
             try:
                 created_model = await self.model.objects.create(**data)
             except Exception as e:

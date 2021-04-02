@@ -257,7 +257,7 @@ class TypeTechnologyGet(TypeTechnologyUpdate):
 class ToolTypeUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
     short_desc: Optional[str]
     technology: Optional[TechnologyGet]
 
