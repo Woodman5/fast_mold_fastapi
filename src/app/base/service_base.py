@@ -2,6 +2,7 @@ from pprint import pprint
 from typing import List, Optional, Set, TypeVar, Type, Sequence, Union, Dict
 from datetime import datetime, timezone
 import pytz
+from decimal import Decimal
 
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status
@@ -25,6 +26,17 @@ async def check_name_slug(model: Type[Model], name: str, slug: str) -> bool:
     if name_exists or slug_exists:
         return True
     return False
+
+
+# removing all empty (None, "", []) data from dictionaries. Zeros are keeping.
+def clear_dict(data: Dict) -> Dict:
+    temp_data = data.copy()
+    for k, v in temp_data.items():
+        if isinstance(v, dict):
+            clear_dict(v)
+        if k == 'item_removed' or not v and not isinstance(v, (int, float, Decimal)):
+            data.pop(k)
+    return data
 
 
 class CRUDBase:
@@ -76,7 +88,7 @@ class CRUDBase:
         data = self.construct_data(item, response_model)
         return data
 
-    async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
+    async def get_multi(self, skip=0, limit=100, response_model=None) -> Sequence[Optional[Model]]:
         if 'item_removed' in self.model.__fields__.keys():
             return await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).all()
         else:
@@ -144,6 +156,7 @@ class CRUDRelations(CRUDBase):
 
     async def get_item(self, pk: int):
         try:
+            print('CRUDRelations ---')
             item = await self.model.objects.select_related(self.rel).exclude_fields(self.exclude).get(id=pk)
             print('CRUDRelations ---', item.dict())
         except NoMatch:
@@ -157,10 +170,10 @@ class CRUDRelations(CRUDBase):
         if 'item_removed' in self.model.__fields__.keys() and item.item_removed:
             raise HTTPException(status_code=status.HTTP_410_GONE, detail='Item removed')
 
-        print('CRUDRelations 2 ---', item.dict())
+        print('CRUDRelations 2 ---')
         return item
 
-    async def get_multi(self, skip=0, limit=100) -> Sequence[Optional[Model]]:
+    async def get_multi(self, skip=0, limit=100, response_model=None) -> Sequence[Optional[Model]]:
         if 'item_removed' in self.model.__fields__.keys():
             return await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).select_related(self.rel).all()
         else:
@@ -211,7 +224,7 @@ class CRUDRelationsM2M(CRUDRelations):
             await relation_field.add(item)
 
     def remove_field(self, item, keys: Union[str, tuple, list], fields: Union[str, tuple, list]):
-        item_dict = item.dict()
+        item_dict = item.dict(exclude_unset=True)
         if isinstance(keys, str):
             keys = (keys,)
         if isinstance(fields, str):
@@ -223,6 +236,7 @@ class CRUDRelationsM2M(CRUDRelations):
                 for item in item_dict[value]:
                     item.pop(fields[key], None)
         # print('------', item_dict, sep='\n')
+        item_dict = clear_dict(item_dict)
         return item_dict
 
     async def get(self, pk: int, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:

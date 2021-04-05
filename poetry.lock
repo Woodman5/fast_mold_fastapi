@@ -422,7 +422,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "ormar"
-version = "0.9.9"
+version = "0.10.1"
 description = "A simple async ORM with fastapi in mind and pydantic validation."
 category = "main"
 optional = false
@@ -822,7 +822,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "44a44e4803e54e76cd2e5dd4daa1f82eee69ac99ccffd53e529e0d92083cf8a1"
+content-hash = "84fa95ed49d3db6360bbcf4fd6a3454176968bb6554e3b73122dceb0003e33c3"
 
 [metadata.files]
 aiofiles = [
@@ -1080,8 +1080,8 @@ orjson = [
     {file = "orjson-3.4.8.tar.gz", hash = "sha256:08ac106a4e67c7dd3010a948d336294a7549c62677bee9752011347c7688af37"},
 ]
 ormar = [
-    {file = "ormar-0.9.9-py3-none-any.whl", hash = "sha256:f6e3c93f5b15c8c6e502edc9978006ee48278eb7f16d916878100a18fc06c4b2"},
-    {file = "ormar-0.9.9.tar.gz", hash = "sha256:d7c74c374dbef54ceaad64731796a69aef871aa1b5b9e45e9931eba8ffbfe256"},
+    {file = "ormar-0.10.1-py3-none-any.whl", hash = "sha256:d6986e853ee5fa24a2818505e864bcf9b8364134269b44be5d40fc3ef7d4f9c2"},
+    {file = "ormar-0.10.1.tar.gz", hash = "sha256:f78235d36794a9c169a62ae702d17d30927a320c412d2651e64568a2e79545a9"},
 ]
 passlib = [
     {file = "passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1"},

@@ -5,12 +5,7 @@ from fastapi import Body, Form
 from pydantic import BaseModel, validator, ValidationError
 
 from .models import common_data
-
-
-def check_value_in_list(value, value_list):
-    if value in value_list:
-        return True
-    return False
+from src.app.base.helpers import check_value_in_list
 
 
 class ForeignGet(BaseModel):
@@ -23,7 +18,7 @@ class HardnessScalesUpdate(BaseModel):
     hs_max: Optional[int] = 100
     hs_min: Optional[int] = 0
     hs_units: Optional[str] = '-'
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -41,7 +36,7 @@ class HardnessScalesGet(HardnessScalesUpdate):
 class CommonHardnessUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -59,7 +54,7 @@ class CommonHardnessGet(CommonHardnessUpdate):
 class StatusUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -94,7 +89,7 @@ class TechnologyGet(TechnologyUpdate):
 class ToolClassUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -165,7 +160,7 @@ class MeasuringStandardsUpdate(BaseModel):
     slug: Optional[str]
     standard_type: Optional[str]
     application_type: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -204,7 +199,7 @@ class ColorsUpdate(BaseModel):
     color_type: Optional[str]
     hex_code: Optional[str]
     rgb_code: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -235,7 +230,7 @@ class ColorsGet(ColorsUpdate):
 class TypeTechnologyUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
     short_desc: Optional[str]
     technology: Optional[TechnologyGet]
 
@@ -279,7 +274,7 @@ class ToolTypeGet(ToolTypeUpdate):
 class ToolManufacturerUpdate(BaseModel):
     name: Optional[str]
     slug: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str]
     short_desc: Optional[str]
     country: Optional[str]
     url: Optional[str]

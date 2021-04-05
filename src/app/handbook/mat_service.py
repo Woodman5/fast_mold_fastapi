@@ -2,8 +2,7 @@ from pprint import pprint
 from typing import List, Optional, Set, TypeVar, Type, Sequence, Union, Dict
 from datetime import datetime, timezone
 import pytz
-
-from decimal import Decimal
+import json
 
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status
@@ -30,7 +29,9 @@ from .models.material import (
 )
 from src.app.base.service_base import (
     CRUDRelationsM2M,
-    check_name_slug)
+    check_name_slug,
+    clear_dict
+)
 
 
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -38,17 +39,6 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 GetSchemaType = TypeVar("GetSchemaType", bound=BaseModel)
 QuerySchemaType = TypeVar("QuerySchemaType", bound=BaseModel)
 ResponseSchemaType = Type[BaseModel]
-
-
-# removing all empty (None, "", []) data from dictionaries. Zeros are keeping.
-def clear_dict(data: Dict) -> Dict:
-    temp_data = data.copy()
-    for k, v in temp_data.items():
-        if isinstance(v, dict):
-            clear_dict(v)
-        if k == 'item_removed' or not v and not isinstance(v, (int, float, Decimal)):
-            data.pop(k)
-    return data
 
 
 class MaterialCRUD(CRUDRelationsM2M):
@@ -104,12 +94,43 @@ class MaterialCRUD(CRUDRelationsM2M):
         super().__init__(Material, Color, self.rel, self.rel_name, self.pl_name)
 
     async def get(self, pk: int, response_model: ResponseSchemaType) -> Union[BaseModel, HTTPException]:
-        item = await self.get_item(pk=pk)
         print('Original GET ---', )
-        # pprint(item.dict())
+        item = await self.get_item(pk=pk)
+        print(item)
         item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
+        pprint(item_dict)
         data = self.construct_data(item_dict, response_model)
         return data
+
+    def process_data(self, items):
+        result = []
+        for item in items:
+            item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
+            appl = item_dict.pop('application', None)
+            if appl:
+                appl = json.dumps(appl)
+                item_dict['application'] = appl
+            # data = self.construct_data(item_dict, response_model)
+            result.append(item_dict)
+        return result
+
+    async def get_multi(self, skip=0, limit=10, response_model=None):
+        items = await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).select_related(self.rel).all()
+        print('Original GET MULTI ---', items)
+        result = self.process_data(items)
+        return result
+
+    async def get_all(self) -> Sequence[Optional[Model]]:
+        items = await self.model.objects.exclude(item_removed=True).select_related(self.rel).all()
+        print('Original GET ALL ---', items)
+        result = self.process_data(items)
+        return result
+
+    async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
+        items = await self.model.objects.paginate(page, page_size).exclude(item_removed=True).select_related(self.rel).all()
+        print('Original GET PAGE ---', items)
+        result = self.process_data(items)
+        return result
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType):
         if not await check_name_slug(self.model, obj_in.name, obj_in.slug):

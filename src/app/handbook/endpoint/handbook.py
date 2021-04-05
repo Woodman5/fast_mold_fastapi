@@ -135,4 +135,15 @@ material_router = get_customized_router(url='/materials',
                                         update_schema=mat_schema.MaterialUpdate,
                                         name='Materials'
                                         )
+
+
+# @material_router.get('/', response_model=mat_schema.MaterialGet,
+#                      response_model_exclude_unset=True,
+#                      response_model_exclude_defaults=True,
+#                      response_model_exclude_none=True,
+#                      summary='Materials, get limited items')
+# async def get_multi(*, skip: int = 0, limit: int = 10):
+#     """ Get limited items """
+#     return await mat_service.material_service.get_multi(skip=skip, limit=limit)
+
 handbook_router.include_router(material_router, tags=['Materials'])

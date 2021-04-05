@@ -89,10 +89,14 @@ class MaterialCreate(MaterialUpdate):
 
 class MaterialGet(MaterialUpdate):
     id: int
-    type_technology: List[ForeignGet]
-    matcolor: List[ForeignGet]
-    matcomponent: List[ForeignGet]
-    cust_param: List[ForeignGet]
+    type_technology: Optional[List[ForeignGet]]
+    matcolor: Optional[List[ForeignGet]]
+    matcomponent: Optional[List[ForeignGet]]
+    cust_param: Optional[List[ForeignGet]]
+
+    created: datetime
+    updated: Optional[datetime]
+
 
 # class TypeTechnologyCreate(TypeTechnologyUpdate):
 #     name: str

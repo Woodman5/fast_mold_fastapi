@@ -32,6 +32,7 @@ flammability_list = (
     'Горючий',
     'Не поддерживающий горение',
     'Самозатухающий',
+    None
 )
 
 mat_type_list = (
@@ -54,12 +55,14 @@ fiber_form_list = (
     'Ровинг',
     'Ткань',
     'Стекломат',
+    None
 )
 
 fiber_type_list = (
     'Стекловолокно',
     'Арамид',
     'Углеволокно',
+    None
 )
 
 netting_list = (
@@ -68,12 +71,14 @@ netting_list = (
     'Twill',
     '3H',
     '8H',
+    None
 )
 
 core_type_list = [
     'Коремат',
     'Пенопласт',
     'Соты',
+    None
 ]
 core_material_list = (
     'Алюминий',
@@ -84,6 +89,7 @@ core_material_list = (
     'Полиуретан',
     'Стеклопластик',
     'Углепластик',
+    None
 )
 default_thickness_list = (
     '3',
@@ -100,6 +106,7 @@ default_thickness_list = (
     '80',
     '90',
     '100',
+    None
 )
 
 characteristic_type_list = (

@@ -31,17 +31,25 @@ def get_customized_router(url: str,
     if not update_schema:
         update_schema = create_schema
 
-    @router.get('/', response_model=List[response_schema], summary=f'{name}, get limited items')
+    @router.get('/', response_model=List[response_schema],
+                # response_model_exclude_unset=True,
+                # response_model_exclude_defaults=True,
+                response_model_exclude_none=True,
+                summary=f'{name}, get limited items')
     async def get_multi(*, skip: int = 0, limit: int = 100):
         """ Get limited items """
-        return await service.get_multi(skip=skip, limit=limit)
+        return await service.get_multi(skip=skip, limit=limit, response_model=response_schema)
 
-    @router.get('/all', response_model=List[response_schema], summary=f'{name}, get all items')
+    @router.get('/all', response_model=List[response_schema],
+                response_model_exclude_none=True,
+                summary=f'{name}, get all items')
     async def get_all():
         """ Get all items """
         return await service.get_all()
 
-    @router.get('/pages', response_model=List[response_schema], summary=f'{name}, get items with pagination')
+    @router.get('/pages', response_model=List[response_schema],
+                response_model_exclude_none=True,
+                summary=f'{name}, get items with pagination')
     async def get_by_page(page: int = 1, page_size: int = None):
         """ Get items with pagination """
         page_size = 20 if not page_size else page_size

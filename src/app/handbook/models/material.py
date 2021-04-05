@@ -1,4 +1,8 @@
+from copy import deepcopy
+from typing import Any
+
 from pydantic.typing import ForwardRef
+from pydantic import validator, ValidationError
 import ormar
 from src.app.base.models_base import (
     AbstractBaseModel,
@@ -9,8 +13,10 @@ from src.app.base.models_base import (
     ShortDescriptionMixin,
     UrlMixin,
 )
+from src.app.base.helpers import check_value_in_list
 
 from . import common_data
+
 MaterialRef = ForwardRef("Material")
 
 
@@ -374,7 +380,7 @@ class Printing3D(AbstractBaseModel):
     class Meta(ormar.ModelMeta):
         tablename = "hb_p3d"
 
-    mat_type = ormar.String(max_length=50, choices=common_data.mat_type_list, nullable=True)
+    mat_form = ormar.String(max_length=50, choices=common_data.mat_type_list, nullable=True)
     supp_removing_desc = ormar.String(max_length=800, nullable=True)
 
     fraction_dim = ormar.Decimal(minimum=0.0, maximum=12, max_digits=4, decimal_places=2, nullable=True)
