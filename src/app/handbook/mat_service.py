@@ -102,7 +102,7 @@ class MaterialCRUD(CRUDRelationsM2M):
         data = self.construct_data(item_dict, response_model)
         return data
 
-    def process_data(self, items):
+    def process_data(self, items, response_model=None):
         result = []
         for item in items:
             item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
@@ -110,26 +110,29 @@ class MaterialCRUD(CRUDRelationsM2M):
             if appl:
                 appl = json.dumps(appl)
                 item_dict['application'] = appl
-            # data = self.construct_data(item_dict, response_model)
-            result.append(item_dict)
+            if response_model:
+                data = self.construct_data(item_dict, response_model)
+                result.append(data)
+            else:
+                result.append(item_dict)
         return result
 
     async def get_multi(self, skip=0, limit=10, response_model=None):
         items = await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).select_related(self.rel).all()
         print('Original GET MULTI ---', items)
-        result = self.process_data(items)
+        result = self.process_data(items=items)
         return result
 
-    async def get_all(self) -> Sequence[Optional[Model]]:
+    async def get_all(self, response_model=None) -> Sequence[BaseModel]:
         items = await self.model.objects.exclude(item_removed=True).select_related(self.rel).all()
         print('Original GET ALL ---', items)
-        result = self.process_data(items)
+        result = self.process_data(items=items, response_model=response_model)
         return result
 
     async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
         items = await self.model.objects.paginate(page, page_size).exclude(item_removed=True).select_related(self.rel).all()
         print('Original GET PAGE ---', items)
-        result = self.process_data(items)
+        result = self.process_data(items=items)
         return result
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType):

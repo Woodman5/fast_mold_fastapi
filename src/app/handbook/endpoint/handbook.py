@@ -2,13 +2,16 @@ from fastapi import APIRouter
 
 from src.app.auth.permissions import get_superuser, get_user
 
-from src.app.handbook import schemas
-from src.app.handbook import service
+from src.app.handbook import schemas, service, mat_router
 from src.app.handbook import mat_service, mat_schema
 from src.app.handbook.models import material
 from src.app.base.router_base import get_customized_router
 
 handbook_router = APIRouter()
+
+
+handbook_router.include_router(mat_router.material_router, tags=['Materials'])
+
 
 hs_router = get_customized_router(url='/hs',
                                   service=service.hardness_scales_service,
@@ -128,22 +131,15 @@ handbook_router.include_router(toolmanufacturer_router, tags=['Tool Manufactures
 #
 #
 #
-material_router = get_customized_router(url='/materials',
-                                        service=mat_service.material_service,
-                                        response_schema=mat_schema.MaterialGet,
-                                        create_schema=mat_schema.MaterialCreate,
-                                        update_schema=mat_schema.MaterialUpdate,
-                                        name='Materials'
-                                        )
+# material_router = get_customized_router(url='/materials',
+#                                         service=mat_service.material_service,
+#                                         response_schema=mat_schema.MaterialGet,
+#                                         create_schema=mat_schema.MaterialCreate,
+#                                         update_schema=mat_schema.MaterialUpdate,
+#                                         name='Materials'
+#                                         )
 
 
-# @material_router.get('/', response_model=mat_schema.MaterialGet,
-#                      response_model_exclude_unset=True,
-#                      response_model_exclude_defaults=True,
-#                      response_model_exclude_none=True,
-#                      summary='Materials, get limited items')
-# async def get_multi(*, skip: int = 0, limit: int = 10):
-#     """ Get limited items """
-#     return await mat_service.material_service.get_multi(skip=skip, limit=limit)
 
-handbook_router.include_router(material_router, tags=['Materials'])
+
+
