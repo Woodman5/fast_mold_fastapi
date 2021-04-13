@@ -98,7 +98,8 @@ class MaterialCRUD(CRUDRelationsM2M):
         item = await self.get_item(pk=pk)
         print(item)
         item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
-        pprint(item_dict)
+        print(item_dict['application'])
+        print(type(item_dict['application']))
         data = self.construct_data(item_dict, response_model)
         return data
 
@@ -106,10 +107,14 @@ class MaterialCRUD(CRUDRelationsM2M):
         result = []
         for item in items:
             item_dict = self.remove_field(item, self.rel[-4::], self.fields_to_del)
-            appl = item_dict.pop('application', None)
-            if appl:
-                appl = json.dumps(appl)
-                item_dict['application'] = appl
+            # appl = item_dict.pop('application', None)
+            # if appl:
+            #     print('---1---', appl)
+            #     print(type(appl))
+            #     appl = json.dumps(appl)
+            #     print('---2---', appl)
+            #     print(type(appl))
+            #     item_dict['application'] = appl
             if response_model:
                 data = self.construct_data(item_dict, response_model)
                 result.append(data)
@@ -120,7 +125,7 @@ class MaterialCRUD(CRUDRelationsM2M):
     async def get_multi(self, skip=0, limit=10, response_model=None):
         items = await self.model.objects.offset(skip).limit(limit).exclude(item_removed=True).select_related(self.rel).all()
         print('Original GET MULTI ---', items)
-        result = self.process_data(items=items)
+        result = self.process_data(items=items, response_model=response_model)
         return result
 
     async def get_all(self, response_model=None) -> Sequence[BaseModel]:
@@ -129,10 +134,10 @@ class MaterialCRUD(CRUDRelationsM2M):
         result = self.process_data(items=items, response_model=response_model)
         return result
 
-    async def get_page(self, page, page_size) -> Sequence[Optional[Model]]:
+    async def get_page(self, page, page_size, response_model=None) -> Sequence[BaseModel]:
         items = await self.model.objects.paginate(page, page_size).exclude(item_removed=True).select_related(self.rel).all()
         print('Original GET PAGE ---', items)
-        result = self.process_data(items=items)
+        result = self.process_data(items=items, response_model=response_model)
         return result
 
     async def create(self, obj_in: CreateSchemaType, response_model: ResponseSchemaType):
@@ -187,6 +192,4 @@ class MaterialCRUD(CRUDRelationsM2M):
 
 
 material_service = MaterialCRUD()
-
-
 
